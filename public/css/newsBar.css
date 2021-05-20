@@ -1,0 +1,151 @@
+.TickerNews{
+	width: 100%;
+	height: 50px;
+	line-height: 48px;
+}
+.ti_wrapper{
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+}
+.ti_slide{
+	width: 30000px;
+	position: relative;
+	right: 0;
+	top: 0;
+}
+.ti_content{
+	width: 8000px;
+	position: relative;
+	float:right;
+}
+.ti_news{
+	float:right;
+}
+.ti_news a{
+	display: block;
+	margin-left: 10px; /**/
+	color:#000032;
+	text-decoration: none;
+	font-family: geneva;
+}
+
+body{
+	margin:0;
+	padding:0;
+}
+
+/* template */
+
+.TickerNews.default_theme{
+	background-color: #f1f1f1;
+}
+
+.TickerNews.default_theme .ti_wrapper{
+	border:#CBCBCB solid 1px;
+	border-width: 1px 0;
+}
+
+.TickerNews.default_theme .ti_news a{
+	display: block;
+	margin-left: 10px;/**/
+	color:#333;
+	text-transform: uppercase;
+	text-decoration: none;
+	font-family: geneva;
+}
+
+.TickerNews.default_theme .ti_news span{
+	color:#78b319;
+	font-size: 110%;
+}
+
+
+
+
+
+/* template 2 */
+
+.TickerNews.default_theme_2{
+	background-color: #f1f1f1;
+	position: relative;
+	font-family: geneva;
+}
+
+.TickerNews.default_theme_2 *{
+	box-sizing:border-box;
+}
+
+.TickerNews.default_theme_2 .leftside{
+	position: relative;
+	right:-20px;
+	height: 100%;
+	width: 140px;
+	float:right;
+	border:#000000 solid 1px;
+	border-width: 1px 0;
+}
+
+.TickerNews.default_theme_2 .leftside h4{
+	height: 100%;
+	margin: 0;
+	text-align: center;
+	text-transform: uppercase;
+	background-color: #000032;
+	border-left: solid 2px #78b319;
+	color:white;
+	padding:0 5px;
+	line-height: unset;
+}
+
+.TickerNews.default_theme_2 .ti_wrapper{
+	position: absolute;
+	right: 120px;
+	float:right;
+	border:#CBCBCB solid 1px;
+	border-width: 1px 0;
+}
+
+.TickerNews.default_theme_2 .ti_news a{
+	display: block;
+	margin-left: 10px; /**/
+	color:#333;
+	text-transform: uppercase;
+	text-decoration: none;
+	margin-right: solid 1px #c1c1c1;
+	margin-right: solid 1px #c1c1c1;
+}
+
+.TickerNews.default_theme_2 .ti_news span{
+	color:#78b319;
+	font-size: 110%;
+}
+
+
+
+/* template 2 */
+
+.TickerNews.default_theme_3{
+	background-color: #f1f1f1;
+	position: relative;
+	font-family: geneva;
+}
+
+.TickerNews.default_theme_3 .ti_wrapper{
+	border:#CBCBCB solid 1px;
+	border-width: 1px 0;
+}
+
+.TickerNews.default_theme_3 .ti_news a{
+	display: block;
+	margin-left: 10px;/**/
+	color:#333;
+	text-transform: uppercase;
+	text-decoration: none;
+	
+}
+
+.TickerNews.default_theme_3 .ti_news span{
+	color:#78b319;
+	font-size: 110%;
+}
