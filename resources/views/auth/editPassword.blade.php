@@ -63,3 +63,14 @@
     </div>
 </div>
 @endsection
+
+@section('scripts')
+<script>
+    // function pwtt(x)
+    // {
+    // }
+$(document).ready(function() {
+    $('#password').tooltip({'trigger':'focus', 'title': '8 حروف أو أكثر'});
+  });
+</script>
+@endsection

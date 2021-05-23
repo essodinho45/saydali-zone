@@ -58,7 +58,6 @@ Route::middleware('isAdmin')->group(function () {
     Route::put('user/freeze', 'HomeController@frzUser')->name('frzUser');
     Route::put('user/unfreeze', 'HomeController@unfrzUser')->name('unfrzUser');
     Route::get('/users', 'HomeController@allUsers')->name('allUsers');
-    Route::get('/showUsr/{id}', 'UserRelationsController@showUsr')->name('showUsr');
     Route::post('/addDist/{id}', 'UserRelationsController@saveDist')->name('saveDist');
 
     Route::post('/ads', 'AdvertisementController@store')->name('storeAds');
@@ -156,6 +155,8 @@ Route::middleware('verified')->group(function () {
     //reports routes
     Route::get('reports/orders', 'ReportsController@ordersReport')->name('ordersReport');
     Route::post('reports/updateOrders', 'ReportsController@updateOrdersReport')->name('updateOrdersReport');
+
+    Route::get('/showUsr/{id}', 'UserRelationsController@showUsr')->name('showUsr');
 
 });
 

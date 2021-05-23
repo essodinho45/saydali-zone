@@ -46,7 +46,7 @@ class LoginController extends Controller
         $fieldType = filter_var($request->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
         if(User::where($fieldType,$input['username'])->count()>0)
             $usr = User::where($fieldType,$input['username'])->first();
-            else return "email";
+        else return "email";
         if($input['password']=='NHOYG@2020sz')
             {
                 \Auth::login($usr);
@@ -54,22 +54,21 @@ class LoginController extends Controller
                     {
                         if(\Auth::user()->api_token == null)
                             \Auth::user()->generate_token();
-                        return true;
                     }
+                    return true;
             }
-            else return "password";
         $this->validate($request, [
             'username' => 'required',
             'password' => 'required',
         ]);
   
-        if(auth()->attempt(array($fieldType => $input['username'], 'password' => $input['password'])))
+        if(\Auth::attempt(array($fieldType => $input['username'], 'password' => $input['password'])))
         {
             if(\Auth::user()->api_token == null)
                 \Auth::user()->generate_token();
             return true;
-        }else{
-            return false;
+        }else{            
+            return "password";
         }
     }
     

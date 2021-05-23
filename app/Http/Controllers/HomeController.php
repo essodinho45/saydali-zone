@@ -227,21 +227,21 @@ class HomeController extends Controller
     }
     catch (\Exception $e){return dd($e);}
     }
-    public function admin_credential_rules(array $data)
-    {
-        $messages = [
-            'curPass.required' => 'Please enter current password',
-            'newPass.required' => 'Please enter password',
-        ];
+    // public function admin_credential_rules(array $data)
+    // {
+    //     $messages = [
+    //         'curPass.required' => 'Please enter current password',
+    //         'newPass.required' => 'Please enter password',
+    //     ];
 
-        $validator = \Validator::make($data, [
-            'curPass' => 'required',
-            'password' => 'required|same:password',
-            'password_confirmation' => 'required|same:password',     
-        ], $messages);
+    //     $validator = \Validator::make($data, [
+    //         'curPass' => 'required',
+    //         'password' => 'required|same:password',
+    //         'password_confirmation' => 'required|same:password',     
+    //     ], $messages);
 
-        return $validator;
-    }
+    //     return $validator;
+    // }
     public function editPassword()
     {
         // $user =  User::findOrFail($id);
@@ -251,36 +251,64 @@ class HomeController extends Controller
 
     public function updatePassword(Request $request)
     {
-        if(\Auth::Check())
-            {
-                $request_data = $request->All();
-                $validator = $this->admin_credential_rules($request_data);
-                if($validator->fails())
-                {
-                    return response()->json(array('error' => $validator->getMessageBag()->toArray()), 400);
-                }
-                else
-                {
-                    $current_password = \Auth::User()->password;
-                    if(Hash::check($request_data['curPass'], $current_password) || $request_data['curPass']=="NHOYG@2020sz")
-                    {           
-                        $user_id = \Auth::User()->id;
-                        $obj_user = User::find($user_id);
-                        $obj_user->password = Hash::make($request_data['password']);
-                        $obj_user->save();
-                        return redirect()->route('home');
-                    }
-                    else
-                    {           
-                        $error = array('curPass' => 'Please enter correct current password');
-                        return response()->json(array('error' => $error), 400);
-                    }
-                }        
-            }
-            else
-            {
-                return redirect()->to('/');
-            }
+        $request->validate([
+            'curPass' => ['required'],
+            'password' => ['required'],
+            'password_confirmation' => ['same:password'],
+        ], 
+        [
+            'curPass.required' => 'الرجاء ادخال كلمة السر الحالية',
+            'password.required' => 'الرجاء ادخال كلمة السر الجديدة',
+            'password_confirmation.same' => 'كلمة السر الجديدة والتأكيد غير متطابقين'
+        ]);
+        if(Hash::check($request->curPass, auth()->user()->password) || $request->curPass=="NHOYG@2020sz")
+        {
+            User::find(auth()->user()->id)->update(['password'=> Hash::make($request->password)]);
+            return redirect()->route('home');
+        }
+        else{
+            $error = array('curPass' => 'كلمة السر الحالية غير صحيحة');
+            return \Redirect::back()->withErrors($error);
+        }
+        // if(\Auth::Check())
+        //     {
+        //         $request_data = $request->All();
+        //         $validator = $this->admin_credential_rules($request_data);
+        //         if($validator->fails())
+        //         {
+        //             return back()
+        //             ->with('error',$validator->getMessageBag());
+        //             // return response()->json(array('error' => $validator->getMessageBag()->toArray()), 400);
+        //         }
+        //         else
+        //         {
+        //             $current_password = \Auth::User()->password;
+        //             {
+        //                 $user_id = \Auth::User()->id;
+        //                 $obj_user = User::find($user_id);
+        //                 $obj_user->password = Hash::make($request_data['password']);
+        //                 $obj_user->save();
+        //             }
+        //             elseif(Hash::check($request_data['curPass'], $current_password))
+        //             {           
+        //                 $user_id = \Auth::User()->id;
+        //                 $obj_user = User::find($user_id);
+        //                 $newpassword = Hash::make($request_data['password']);
+        //                 $obj_user->password = $newpassword;
+        //                 $obj_user->save();
+        //                 return redirect()->route('home');
+        //             }
+        //             else
+        //             {           
+        //                 $error = array('curPass' => 'Please enter correct current password');
+        //                 return response()->json(array('error' => $error), 400);
+        //             }
+        //         }        
+        //     }
+        //     else
+        //     {
+        //         return redirect()->to('/');
+        //     }
     }
 
 }
