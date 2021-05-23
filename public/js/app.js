@@ -49520,6 +49520,7 @@ function catChange(admin = false){
       {
       $('#licence_number_div').removeClass('d-none');
       $('#s_name_div').removeClass('d-none');
+      $('#commercial_name_div').removeClass('d-none');
       if(admin)
         {
           $('#company_div').addClass('d-none');
@@ -49530,6 +49531,7 @@ function catChange(admin = false){
       {
       $('#licence_number_div').addClass('d-none');
       $('#s_name_div').addClass('d-none');
+      $('#commercial_name_div').addClass('d-none');
       if(admin)
         {
           $('#company_div').addClass('d-none');
@@ -49540,6 +49542,7 @@ function catChange(admin = false){
       {
       $('#licence_number_div').addClass('d-none');
       $('#s_name_div').removeClass('d-none');
+      $('#commercial_name_div').removeClass('d-none');
       if(admin)
         {
           $('#company_div').addClass('d-none');

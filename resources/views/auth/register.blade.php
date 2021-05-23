@@ -131,6 +131,19 @@
                                 </div>
                         </div>
 
+                        <div class="form-group row @auth @if(!(Auth::user()->category->id == 2 || Auth::user()->category->id == 1)) d-none @endif @endauth" id="commercial_name_div">
+                            <label class="col-md-3 text-right" for="commercial_name">{{__("Commercial Name")}}</label>
+                            <div class="col-md-6">
+                                    <input id="commercial_name" type="text" class="form-control @error('commercial_name') is-invalid @enderror" name="commercial_name" value="{{ old('commercial_name') }}">
+    
+                                    @error('commercial_name')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                        </div>
+
                         <div class="form-group row">
                             <label class="col-md-3 text-right" for="email">{{__("E-Mail Address")}} *</label>
                             <div class="col-md-6">

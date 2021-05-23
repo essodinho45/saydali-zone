@@ -28,11 +28,26 @@
 
                         @if($user->user_category_id != 1)
                         <div class="form-group row" id="s_name_div">
-                            <label class="col-md-3 text-right" for="offer_type">{{__("Second Name")}}</label>
+                            <label class="col-md-3 text-right" for="s_name">{{__("Second Name")}}</label>
                             <div class="col-md-6">
                                     <input id="s_name" type="text" class="form-control @error('s_name') is-invalid @enderror" name="s_name" value="{{ $user->s_name }}">
     
                                     @error('s_name')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                        </div>
+                        @endif
+
+                        @if($user->user_category_id != 1)
+                        <div class="form-group row" id="s_name_div">
+                            <label class="col-md-3 text-right" for="commercial_name">{{__("Commercial Name")}}</label>
+                            <div class="col-md-6">
+                                    <input id="commercial_name" type="text" class="form-control @error('commercial_name') is-invalid @enderror" name="commercial_name" value="{{ $user->commercial_name }}">
+    
+                                    @error('commercial_name')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>

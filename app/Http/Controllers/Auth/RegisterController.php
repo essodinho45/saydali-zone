@@ -68,6 +68,7 @@ class RegisterController extends Controller
             'f_name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             's_name' => ['nullable', 'string', 'max:255'],
+            'commercial_name' => ['nullable', 'string', 'max:255'],
             'user_category_id' => [ 'string', 'required'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'email2' => ['nullable', 'string', 'email', 'max:255', 'unique:users'],
@@ -120,6 +121,7 @@ class RegisterController extends Controller
         return User::create([
             'f_name' => $data['f_name'],
             's_name' => $data['s_name'],
+            'commercial_name' => $data['commercial_name'],
             'username' => $data['username'],
             'user_category_id' => $data['user_category_id'],
             'email' => $data['email'],

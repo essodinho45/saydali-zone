@@ -75,6 +75,7 @@ class HomeController extends Controller
         }
         $user->f_name = $data['f_name'];
         $user->s_name = $data['s_name'];
+        $user->commercial_name = $data['commercial_name'];
         $user->username = $data['username'];
         $user->user_category_id = $data['user_category_id'];
         $user->email = $data['email'];
