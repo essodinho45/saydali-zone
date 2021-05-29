@@ -24,6 +24,22 @@
                             @if($user->fax1 != null) <h5><i class="fas fa-fax mr-3"></i>{{$user->fax1}}&nbsp;@if($user->fax2 != null)- {{$user->fax2}} @endif </h5> @endif
                             <h5><i class="fas fa-at mr-3"></i>{{$user->email}}&nbsp;@if($user->email2 != null)- {{$user->email2}} @endif </h5>
                             <h5><i class="fas fa-map-marker-alt mr-4"></i>{{$user->itsCountry->ar_name}}&nbsp;-&nbsp;{{$user->itsCity->ar_name}}@if($user->region != null)&nbsp;-&nbsp;{{$user->region}}@endif @if($user->address != null)&nbsp;-&nbsp;{{$user->address}}@endif </h5>
+                            @if($user->user_category_id == 2)
+                                <hr>
+                                <h4>{{__('Companies')}}</h4>
+                                <ul>
+                                    @foreach ($user->parents as $parent)
+                                        <li><a href="{{route('showUsr', array($parent->id))}}">{{$parent->f_name}}</a></li>
+                                    @endforeach
+                                </ul>
+                                <hr>
+                                <h4>{{__('Distributors')}}</h4>
+                                <ul>
+                                    @foreach ($user->children as $parent)
+                                        <li><a href="{{route('showUsr', array($parent->id))}}">{{$parent->f_name}} &nbsp; {{$parent->s_name}}</a></li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </div>
 
                     </div>
@@ -56,34 +72,39 @@
                         </div>
                     </form>
                     @endif
-                    @if(Auth::user()->category->id == 0)
+                    @if(Auth::user()->category->id == 0 || Auth::user()->category->id == 5)
                     <hr>
+                    @if(Auth::user()->category->id == 0)
                         @if($user->email_verified_at == null)
                             <a class="btn btn-info float-right mx-1" id="verBtn{{$user->id}}" href="#" onclick="verUsrAjax({{$user->id}})">{{__('Verify')}}</a>
                         @endif
-                        @if($user->user_category_id != 0)
-                            @if($user->freezed == false)
-                                <a class="btn btn-danger float-right mx-1" id="frzUsrBtn{{$user->id}}" href="#" onclick="frzUsrAjax({{$user->id}})">{{__('Freeze')}}</a>
-                            @elseif($user->freezed == true)
-                                <a class="btn btn-secondary float-right mx-1" id="unfrzUsrBtn{{$user->id}}" href="#" onclick="unfrzUsrAjax({{$user->id}})">{{__('Unfreeze')}}</a>
+                            @if($user->user_category_id != 0)
+                                @if($user->freezed == false)
+                                    <a class="btn btn-danger float-right mx-1" id="frzUsrBtn{{$user->id}}" href="#" onclick="frzUsrAjax({{$user->id}})">{{__('Freeze')}}</a>
+                                @elseif($user->freezed == true)
+                                    <a class="btn btn-secondary float-right mx-1" id="unfrzUsrBtn{{$user->id}}" href="#" onclick="unfrzUsrAjax({{$user->id}})">{{__('Unfreeze')}}</a>
+                                @endif
+                                @if($user->items->count()==0
+                                && $user->ordersFromUser->count()==0
+                                && $user->ordersToUser->count()==0
+                                && $user->cartsFromUser->count()==0
+                                && $user->cartsToUser->count()==0
+                                && $user->posts->count()==0
+                                && $user->offers->count()==0
+                                && $user->quantities->count()==0
+                                && $user->baskets->count()==0)
+                                    <form action="{{route('deleteUser',['id' => $user->id])}}" method="POST" class="d-inline-block float-right mx-1">
+                                        @csrf
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button class="btn btn-danger mx-1" type="submit">
+                                            {{__("Delete")}}
+                                        </button>
+                                    </form>
+                                @endif
                             @endif
-                            @if($user->items->count()==0
-                            && $user->ordersFromUser->count()==0
-                            && $user->ordersToUser->count()==0
-                            && $user->cartsFromUser->count()==0
-                            && $user->cartsToUser->count()==0
-                            && $user->posts->count()==0
-                            && $user->offers->count()==0
-                            && $user->quantities->count()==0
-                            && $user->baskets->count()==0)
-                                <form action="{{route('deleteUser',['id' => $user->id])}}" method="POST" class="d-inline-block float-right mx-1">
-                                    @csrf
-                                    <input type="hidden" name="_method" value="DELETE">
-                                    <button class="btn btn-danger mx-1" type="submit">
-                                        {{__("Delete")}}
-                                    </button>
-                                </form>
-                            @endif
+                        @endif
+                        @if($user->category->id == 3 || $user->category->id == 2)
+                            <a class="btn btn-info float-right mx-1" id="viewItemsBtn{{$user->id}}" href="{{ route('itemsByAgent', array($user->id))}}">{{__('Show Items')}}</a>
                         @endif
                     @endif
                     @if((Auth::user()->category->id == 1 || Auth::user()->category->id == 2) && $user->parents->contains(Auth::user()->id))

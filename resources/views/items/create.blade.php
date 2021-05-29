@@ -8,7 +8,7 @@
                 <div class="card-header bg-lightkiwi">{{ __('Add Item') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('storeItem') }}" id="newItemForm" {{--enctype="multipart/form-data"--}}>
+                    <form method="POST" action="{{ route('storeItem') }}" id="newItemForm" enctype="multipart/form-data">
                         @csrf
                         <div class="col-md-8 offset-md-2">
                             <nav>
@@ -66,6 +66,13 @@
                                                     </span>
                                                 @enderror
                                             </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label class="col-md-3 text-right" for="image">{{__("Image")}}</label>
+                                        <div class="col-md-6">
+                                                <input type="file" class="form-control-file" name="image" id="image">
+                                        </div>
                                     </div>
             
                                     <div class="form-group row">

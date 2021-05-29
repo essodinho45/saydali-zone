@@ -28,6 +28,7 @@
                         {{$agent->username}}
                 </td>
                 <td>
+                    <a class="btn btn-secondary btn-sm" href="/showUsr/{{$agent->id}}">{{__('Show')}}</a>
                     <form action="{{route('removeFavAg',['id' => $agent->id, 'comp_id'=>$agent->pivot->comp_id])}}" method="POST" class="d-inline-block">
                         @csrf
                         <input type="hidden" name="_method" value="DELETE">

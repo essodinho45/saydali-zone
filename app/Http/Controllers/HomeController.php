@@ -312,4 +312,10 @@ class HomeController extends Controller
         //     }
     }
 
+    public function migrate()
+    {
+        # code...
+        \Illuminate\Support\Facades\Artisan::call('migrate');
+    }
+
 }

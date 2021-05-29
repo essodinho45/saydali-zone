@@ -69,6 +69,7 @@ Route::middleware('isAdmin')->group(function () {
     Route::delete('/ads/{id}', 'AdvertisementController@destroy')->name('deleteAds');
     Route::delete('orders/{id}', 'OrdersController@destroy')->name('deleteOrder');
     Route::delete('user/{id}', 'UserRelationsController@delUser')->name('deleteUser');
+    Route::get('migrate', 'HomeController@migrate')->name('migrate');
 });
 
 Route::middleware('verified')->group(function () {
@@ -102,6 +103,7 @@ Route::middleware('verified')->group(function () {
     Route::put('items/{id}', 'ItemsController@update')->name('updateItem');
     Route::delete('items/{id}', 'ItemsController@destroy')->name('deleteItem');
     Route::post('items/freeze', 'ItemsController@freezeItemByUser')->name('freezeItem');
+    Route::get('items/itemsByAgent/{agent_id}', 'ItemsController@itemsByAgent')->name('itemsByAgent');
 
 
     //orders routes

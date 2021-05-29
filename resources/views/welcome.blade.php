@@ -16,7 +16,7 @@
               <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                 <div class="card-body p-0">
                     <div class="list-group">
-                        <a href="https://www.moh.gov.sy/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Ministry of Health")}} - {{__("Syria")}}</small></a>
+                        <a href="http://www.moh.gov.sy/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Ministry of Health")}} - {{__("Syria")}}</small></a>
                         <a href="https://www.moph.gov.lb/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Ministry of Health")}} - {{__("Lebanon")}}</small></a>
                         <a href="https://www.moh.gov.jo/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Ministry of Health")}} - {{__("Jordan")}}</small></a>
                         <a href="https://www.moh.gov.sa/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Ministry of Health")}} - {{__("Saudi Arabia")}}</small></a>
@@ -36,10 +36,10 @@
                 <div class="card-body p-0">
                     <div class="list-group">
                         <a href="https://www.facebook.com/syrpharma/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Syria")}}</small></a>
-                        <a href="https://www.facebook.com/Dam.Pharmacy/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Damascus")}}</small></a>
+                        <a href="https://www.facebook.com/Damas.Pharmacy" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Damascus")}}</small></a>
                         <a href="https://www.facebook.com/%D9%86%D9%82%D8%A7%D8%A8%D8%A9-%D8%B5%D9%8A%D8%A7%D8%AF%D9%84%D8%A9-%D8%B3%D9%88%D8%B1%D9%8A%D8%A7-%D9%81%D8%B1%D8%B9-%D8%B1%D9%8A%D9%81-%D8%AF%D9%85%D8%B4%D9%82-610221282340647/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Damascus Countryside")}}</small></a>
                         <a href="https://www.facebook.com/%D9%86%D9%82%D8%A7%D8%A8%D8%A9-%D8%A7%D9%84%D8%B5%D9%8A%D8%A7%D8%AF%D9%84%D8%A9-%D9%81%D8%B1%D8%B9-%D8%AD%D9%84%D8%A8-104914734179942/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Aleppo")}}</small></a>
-                        <a href="https://www.facebook.com/groups/HomsPharma/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Homs")}}</small></a>
+                        <a href="https://www.facebook.com/HomsPharmacyAssociation" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Homs")}}</small></a>
                         <a href="https://www.facebook.com/sphlattakia/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Lattakia")}}</small></a>
                         <a href="https://www.facebook.com/sph.tartous/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Tartous")}}</small></a>
                         <a href="https://www.facebook.com/pharma.hama/" target="_blank" class="list-group-item list-group-item-action p-0 p-1 pt-2"><small>{{__("Syndicate of Pharmacists")}} - {{__("Hama")}}</small></a>

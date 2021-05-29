@@ -31,7 +31,7 @@
         <nav class="navbar navbar-expand-md navbar-dark bg-navyblue shadow-sm text-lightkiwi" style="line-height: normal;">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="../images/SZlogo112.png">
+                    <img src="{{ asset("/images/SZlogo112.png") }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">

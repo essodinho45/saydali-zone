@@ -9,7 +9,7 @@ class Item extends Model
 {
     protected $fillable = [
         'barcode', 'name', 'user_id', 'composition', 'dosage', 'descr1', 'descr2', 'price',
-        'customer_price', 'titer', 'item_type_id', 'item_category_id'
+        'customer_price', 'titer', 'item_type_id', 'item_category_id', 'image'
     ];
     //
     public function catergory()
