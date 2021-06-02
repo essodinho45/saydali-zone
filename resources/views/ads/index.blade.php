@@ -12,6 +12,7 @@
                 <tr>
                     <th scope="col">#</th>
                     <th>{{__('User')}}</th>
+                    <th>{{__('Category')}}</th>
                     <th>{{__('Position')}}</th>
                     <th>{{__('Image')}} / {{__('Text')}}</th>
                     <th>{{__('From Date')}}</th>
@@ -24,6 +25,7 @@
                     <tr>
                         <th scope="row">{{$ad->id}}</th>
                         <td> @if($ad->user != null) {{$ad->user->f_name}} &nbsp; @if($ad->user->s_name != null){{$ad->user->s_name}} @endif @endif</td>
+                        <td> @if($ad->user != null) {{__($ad->user->category->name)}} @endif</td>
                         <td>
                         @if($ad->position == 1 || $ad->position == 2)    {{__('Home Page')}}
                         @elseif($ad->position == 3 || $ad->position == 4) {{__('Control Panel')}}

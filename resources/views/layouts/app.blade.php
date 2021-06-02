@@ -30,7 +30,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-dark bg-navyblue shadow-sm text-lightkiwi" style="line-height: normal;">
             <div class="container">
-                <a class="navbar-brand" href="{{ url('/') }}">
+                <a class="navbar-brand" href="@guest{{ url('/') }}@endguest @auth{{route('home')}}@endauth">
                     <img src="{{ asset("/images/SZlogo112.png") }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>

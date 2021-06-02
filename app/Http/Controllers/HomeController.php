@@ -154,7 +154,7 @@ class HomeController extends Controller
     {
         $countries = Country::all();
         $cities = City::where('country',$countries->first()->id)->get();
-        if(\Auth::user()->user_category_id == 0)
+        if(\Auth::user()->user_category_id == 0 || \Auth::user()->user_category_id == 1 || \Auth::user()->user_category_id == 2)
         {
             $agents = User::where('user_category_id', 2)->get();
             $comps = User::where('user_category_id', 1)->get();
@@ -179,6 +179,7 @@ class HomeController extends Controller
             'f_name' => $request['f_name'],
             's_name' => $request['s_name'],
             'username' => $request['username'],
+            'commercial_name' => $request['commercial_name'],
             'user_category_id' => $request['user_category_id'],
             'email' => $request['email'],
             'email2' => $request['email2'],

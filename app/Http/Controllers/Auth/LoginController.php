@@ -84,9 +84,10 @@ class LoginController extends Controller
     }
     public function apiLogin(Request $request)
     {
-    if($this->baseLogin($request, true) === true)
+        $response = $this->baseLogin($request, true);
+    if($response === true)
         return \Auth::user();
     else
-        return false;
+        return $response;
     }
 }

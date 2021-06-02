@@ -64,6 +64,11 @@ class ItemsController extends Controller
      */
     public function create()
     {
+        if(\Auth::user()->category->id != 0 && \Auth::user()->category->id != 1 && \Auth::user()->category->id != 4)
+        {
+            abort(403);
+            return;
+        }
         $comps = User::where('user_category_id',1)->get();
         return view('items.create', ['types'=>ItemType::all(), 'comps'=>$comps]);
     }
@@ -76,6 +81,11 @@ class ItemsController extends Controller
      */
     public function store(Request $request)
     {
+        if(\Auth::user()->category->id != 0 && \Auth::user()->category->id != 1 && \Auth::user()->category->id != 4)
+            {
+                abort(403);
+                return;
+            }
         $item = new Item();
         if(request()->has('image'))
         {
@@ -215,6 +225,11 @@ class ItemsController extends Controller
     }
     public function import(Request $request) 
     {
+        if(\Auth::user()->category->id != 0 && \Auth::user()->category->id != 1 && \Auth::user()->category->id != 4)
+        {
+            abort(403);
+            return;
+        }
         // dd(request()->file('items_file'));
         Excel::import(new ItemsImport, request()->file('items_file'));
 
@@ -222,6 +237,11 @@ class ItemsController extends Controller
     }
     public function importItems() 
     {
+        if(\Auth::user()->category->id != 0 && \Auth::user()->category->id != 1 && \Auth::user()->category->id != 4)
+        {
+            abort(403);
+            return;
+        }
         return view('items.import');
     }
     protected function ajaxItemRequest(Request $request)
@@ -249,27 +269,33 @@ class ItemsController extends Controller
 
     function itemsByAgent($agent_id)
     {
-        $agent = User::find($agent_id);
-        if($agent->category->name == "Agent")
-            $ids_array = $agent->parents->pluck('id')->toArray();
-        elseif($agent->category->name == "Distributor")
-        {
-            $parents = $agent->parents()->where('user_category_id',2)->wherePivot('verified', '=', true)->wherePivot('freezed', '=', false)->get();
-            $ids_array = [];
-            foreach($parents as $p)
-            {
-                foreach($p->parents->pluck('id')->toArray() as $pid)
-                    array_push($ids_array, $pid);
-            }
-        }
-        array_push($ids_array, (int)$agent_id);
         // dd((int)$agent_id, $ids_array);
         $agents = User::whereIn('user_category_id',[2,3])->get();
         if($agent_id == 0)
-            $items = Item::all();
+            {
+                $items = Item::all();
+                $baskets = Basket::all();
+            }
         else
-            $items = Item::whereIn('user_id', $ids_array)->get();
-        return view('items.ItemsByAgent', ['items'=>$items, 'agents'=>$agents]);
+            {
+                $agent = User::find($agent_id);
+                if($agent->category->name == "Agent")
+                    $ids_array = $agent->parents->pluck('id')->toArray();
+                elseif($agent->category->name == "Distributor")
+                {
+                    $parents = $agent->parents()->where('user_category_id',2)->wherePivot('verified', '=', true)->wherePivot('freezed', '=', false)->get();
+                    $ids_array = [];
+                    foreach($parents as $p)
+                    {
+                        foreach($p->parents->pluck('id')->toArray() as $pid)
+                            array_push($ids_array, $pid);
+                    }
+                }
+                array_push($ids_array, (int)$agent_id);
+                $items = Item::whereIn('user_id', $ids_array)->get();
+                $baskets = Basket::whereIn('user_id', $ids_array)->get();
+            }
+        return view('items.ItemsByAgent', ['items'=>$items, 'baskets'=>$baskets , 'agents'=>$agents, 'agent_id'=>$agent_id]);
     }
 
 }

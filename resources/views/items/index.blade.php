@@ -14,7 +14,7 @@
         </div>
         <div class="col-md-8 p-4">
                 <h3 class="w-50 d-inline-block">{{__('Items')}}</h3>
-                    @if (Auth::user()->user_category_id == 0 || Auth::user()->user_category_id == 1)
+                    @if (Auth::user()->user_category_id == 0 || Auth::user()->user_category_id == 1 || Auth::user()->user_category_id == 4)
                         <button class="btn btn-success float-right" type="submit" onclick="window.location='{{route('importItems')}}'">
                                 {{__("Import from Excel")}}
                         </button>
@@ -44,6 +44,8 @@
                     <th scope="col" class="no_srch">{{__('Type')}}</th>
                     <th scope="col" class="d-none">{{__('Composition')}}</th>
                     <th scope="col" class="d-none">{{__('Barcode')}}</th>
+                    <th scope="col" class="d-none">{{__('Usage')}}</th>
+                    <th scope="col" class="d-none">{{__('Properties')}}</th>
                     @if(Auth::user()->user_category_id == 5)
                     <th scope="col" class="no_srch" data-priority="1">{{__('Quantity')}}</th>
                     <th scope="col" class="no_srch" data-priority="1">{{__('Agent')}}</th>
@@ -62,6 +64,8 @@
                         <td> @if($item->type != null) {{$item->type->ar_name}} @endif </td>
                         <td class="d-none">{{$item->composition}}</td>
                         <td class="d-none">{{$item->barcode}}</td>
+                        <td class="d-none">{{$item->descr1}}</td>
+                        <td class="d-none">{{$item->properties}}</td>
                         @if(Auth::user()->user_category_id == 5)
                         <td>
                             <input type="number" placeholder="0" id="quantity{{$item->id}}" min="0" class="form-control form-control-sm q_inp" name="quantity{{$item->id}}" value="0" onchange="quantityChange({{$item->id}})" required>
@@ -153,10 +157,10 @@
                             @endif
                             <td>
                             @if (Auth::user()->user_category_id == 5)
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#sender_remark" title="{{__('Insert Sender Remark')}}"  onclick="sendItemsToCart({{$item->id}}, true)">
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#sender_remark" title="{{__('Insert Sender Remark')}}"  onclick="sendItemsToCart({{$basket->id}}, true)">
                                     <i class="fas fa-comment"></i>
                                 </button>
-                                <button type="button" class="btn btn-primary disabled btn-sm" title="{{__('Add to Cart')}}"  onclick="ajaxSendtoCart({{$item->id}}, true)" disabled id="b_btn{{$item->id}}">
+                                <button type="button" class="btn btn-primary disabled btn-sm" title="{{__('Add to Cart')}}"  onclick="ajaxSendtoCart({{$basket->id}}, true)" disabled id="b_btn{{$basket->id}}">
                                     <i class="fas fa-shopping-cart"></i>
                                 </button>
                                 {{-- <button type="button" class="btn btn-primary btn-sm" onclick="sendItemsToCart({{$basket->id}}, true)" title="{{__('Add to Cart')}}">
@@ -319,7 +323,7 @@
                         var o = new Option(data.f_name, data.id);
                         /// jquerify the DOM object 'o' so we can use the html method
                         $(o).html(data.f_name + " " + sname);
-                        $(o).attr('logo_image', data[key].logo_image);
+                        $(o).attr('logo_image', data.logo_image);
                         $("#b_reciever_id"+id).append(o);
                         $('#b_btn'+id).removeAttr('disabled').removeClass('disabled');
                     }
