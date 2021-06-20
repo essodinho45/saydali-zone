@@ -35,19 +35,25 @@ class ItemsController extends Controller
                 }
             elseif(\Auth::user()->user_category_id == 3)
             {
-                // $parents = \Auth::user()->parents->where('user_category_id',2);
+                // $parents = \Auth::user()->parents->where('user_category_id',2);                
                 $parents = \Auth::user()->parents()->where('user_category_id',2)->wherePivot('verified', '=', true)->wherePivot('freezed', '=', false)->get();
                 $compsIdArr = [];
                 foreach($parents as $p)
-                {
-                    array_push($compsIdArr, $p->parents->pluck('id'));
-                }
+                    {
+                        foreach($p->parents->pluck('id')->toArray() as $pid)
+                            array_push($compsIdArr, $pid);
+                    }
+                // foreach($parents as $p)
+                // {
+                //     array_push($compsIdArr, $p->parents->pluck('id'));
+                // }
                 $items = Item::whereIn('user_id', $compsIdArr)->get();
                 $baskets = Basket::where('user_id', \Auth::user()->id)->get();
             }
             else
             {
-                $items = Item::whereIn('user_id', \Auth::user()->parents->pluck('id'))->get();
+                $parents = \Auth::user()->parents()->wherePivot('verified', '=', true)->wherePivot('freezed', '=', false)->get();
+                $items = Item::whereIn('user_id', $parents->pluck('id')->toArray())->get();
                 $baskets = Basket::where('user_id', \Auth::user()->id)->get();   
             }
             $ads1 = Advertisement::whereIn('position', [5])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();

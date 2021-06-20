@@ -1,5 +1,7 @@
 <?php
 
+use App\Advertisement;
+use App\Post;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +27,7 @@ Route::get('/cache-clear', function() {
 
 //Clear configuration cache:
 Route::get('/config-cache', function() {
-    $status = Artisan::call('config:Cache');
+    $status = Artisan::call('config:cache');
     return '<h1>Configurations cache cleared</h1>';
 });
 
@@ -41,9 +43,22 @@ Route::get('welcome/{locale}', function ($locale) {
     //
 });
 
-Route::get('/', "HomeController@showWelcome");
+Route::get('/', function () {
+    try{
+        $ads = Advertisement::whereIn('position', [1,2])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
+        $posts = Post::orderBy('updated_at', 'desc')->get();
+        return view('welcome', ['posts'=>$posts, 'ads'=>$ads]);}
+        catch(\Exception $e){dd($e);}
+});
+
 
 Auth::routes(['verify' => true]);
+
+Route::get('/firebase', function(){
+    return view('firebase');
+})->name('firebase');
+Route::post('/save-push-notification-token', 'HomeController@savePushNotificationToken')->name('save-push-notification-token');
+Route::post('/send-push-notification', 'HomeController@sendPushNotification')->name('send.push-notification');
 
 Route::get('error403', 'HomeController@error403')->name("error403");
 Route::get('/news', 'PostsController@index')->name('news');

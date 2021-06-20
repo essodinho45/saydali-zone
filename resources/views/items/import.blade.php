@@ -8,16 +8,16 @@
                 <table class="table table-hover table-sm mt-2" id="ItemsTable">
                         <thead>
                         <tr>
-                            <th scope="col">{{__('Name')}}</th>
+                            <th scope="col">{{__('Name')}} *</th>
                             <th scope="col">{{__('Barcode')}}</th>
                             <th scope="col">{{__('Composition')}}</th>
                             <th scope="col">{{__('Dosage')}}</th>
                             <th scope="col">{{__('Description 1')}}</th>
                             <th scope="col">{{__('Description 2')}}</th>
-                            <th scope="col">{{__('Price')}}</th>
+                            <th scope="col">{{__('Price')}} *</th>
                             <th scope="col">{{__('Customer Price')}}</th>
                             <th scope="col">{{__('Titer')}}</th>
-                            <th scope="col">{{__('Item Type')}}</th>
+                            <th scope="col">{{__('Item Type')}} *</th>
                             <th scope="col">{{__('Item Category')}}</th>
                             <th scope="col">{{__('Properties')}}</th>
                             <th scope="col">{{__('Package')}}</th>

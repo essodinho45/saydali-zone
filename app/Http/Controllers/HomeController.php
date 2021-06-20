@@ -175,6 +175,11 @@ class HomeController extends Controller
         {
             $fileName = 'default_logo';
         }
+        if($request['password'] != $request['password-confirm'])
+        {
+            abort(500);
+            return;
+        }
         $user = User::create([
             'f_name' => $request['f_name'],
             's_name' => $request['s_name'],
@@ -317,6 +322,12 @@ class HomeController extends Controller
     {
         # code...
         \Illuminate\Support\Facades\Artisan::call('migrate');
+    }
+
+    public function savePushNotificationToken(Request $request)
+    {
+        auth()->user()->update(['device_key'=>$request->token]);
+        return response()->json(['token saved successfully.']);
     }
 
 }

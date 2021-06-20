@@ -183,5 +183,9 @@
                 });
                 $('.ti_wrapper').width($('#T1').width() - 120);
 			});
-</script>    
+</script>
+{{-- <script>
+    Echo.channel('events')
+        .listen('RealTimeMessage', (e) => {$('.toast').toast('show');});
+</script> --}}
 @endsection

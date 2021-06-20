@@ -134,14 +134,52 @@
         </nav>
 
         <main>
+            {{-- <div class="position-absolute w-100 d-flex flex-column p-0" style="z-index: 1; height: 0%">
+                <div class="toast mr-auto" role="alert" data-delay="700" data-autohide="true">
+                    <div class="toast-header">
+                        <strong class="mr-auto text-primary">Toast</strong>
+                        <small class="text-muted">3 mins ago</small>
+                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">×</span>
+                        </button>
+                    </div>
+                    <div class="toast-body" id="toast-body"></div>
+                </div>
+              </div>         --}}
             @yield('content')
         </main>
     </div>
 </body>
 
 <script src="{{ asset('js/app.js') }}"></script>
+{{-- <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+  <script>
 
+    // Enable pusher logging - don't include this in production
+    Pusher.logToConsole = true;
+
+    var pusher = new Pusher('26026315a5f5119a4d48', {
+      cluster: 'ap2'
+    });
+
+    var channel = pusher.subscribe('my-channel');
+    channel.bind('my-event', function(data) {
+      alert(JSON.stringify(data));
+      $('#toast-body').text(data);
+      $('.toast').toast('show');
+    });
+
+  </script> --}}
 
 @yield('scripts')
+
+{{-- @auth
+    <script>
+        Echo.private('App.Models.User.'+{{auth()->user()->id}})
+        .notification((notification) => {
+            console.log(notification.message);
+        });
+    </script>
+@endauth --}}
 </html>
 

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddDefaultValueToUserCommercialName extends Migration
+class AddColumnDeviceKey extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddDefaultValueToUserCommercialName extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->string('commercial_name')->nullable()->default(null)->change();
+            $table->string('device_key')->nullable()->default(null);
         });
     }
 
@@ -25,8 +25,6 @@ class AddDefaultValueToUserCommercialName extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('commercial_name');
-        });
+        $table->dropColumn('device_key');
     }
 }

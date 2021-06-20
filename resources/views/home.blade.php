@@ -69,3 +69,74 @@
     </div>
 </div>
 @endsection
+
+{{-- @section('scripts')
+<script type="application/javascript"
+    src="https://code.jquery.com/jquery-3.4.1.min.js"
+    integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+    crossorigin="anonymous"></script>
+<script type="application/javascript" src="https://www.gstatic.com/firebasejs/8.3.0/firebase-app.js"></script>
+<script type="application/javascript" src="https://www.gstatic.com/firebasejs/8.3.0/firebase-messaging.js"></script>
+<script type="application/javascript">
+  var firebaseConfig = {
+    apiKey: "AIzaSyDocWgEMLHp5WjtMtgPryQDECgA24mQHl0",
+    authDomain: "saydalizone.firebaseapp.com",
+    projectId: "saydalizone",
+    storageBucket: "saydalizone.appspot.com",
+    messagingSenderId: "1014551233533",
+    appId: "1:1014551233533:web:8a64e825a1efdba57d8f94",
+    measurementId: "G-0ZRL6FBP0Q"
+  };
+      
+    firebase.initializeApp(firebaseConfig);
+    const messaging = firebase.messaging();
+
+     (function() {
+   // your page initialization code here
+   // the DOM will be available here
+   messaging
+            .requestPermission()
+            .then(function () {
+                return messaging.getToken({ vapidKey: 'BAf1zEauFwgluAu-PQs1Jgl-MbvsoErETP4R_5-MiRuAsoq1O4sBhVxcWiZ7BdJvBfkP91shrgq5-ZQpru9MMgc' })
+            })
+            .then(function(token) {
+                console.log(token);
+   
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+  
+                $.ajax({
+                    url: '{{ route("save-push-notification-token") }}',
+                    type: 'POST',
+                    data: {
+                        token: token
+                    },
+                    dataType: 'JSON',
+                    success: function (response) {
+                        console.log('Token saved successfully.');
+                    },
+                    error: function (err) {
+                        console.log('User Chat Token Error'+ err);
+                    },
+                });
+  
+            }).catch(function (err) {
+                console.log('User Chat Token Error'+ err);
+            });
+
+    })();
+      
+    messaging.onMessage(function(payload) {
+        const noteTitle = payload.notification.title;
+        const noteOptions = {
+            body: payload.notification.body,
+            icon: payload.notification.icon,
+        };
+        new Notification(noteTitle, noteOptions);
+    });
+   
+</script>
+@endsection --}}

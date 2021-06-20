@@ -18,7 +18,7 @@
                     <th scope="col">#</th>
                     <th scope="col">{{__('Company')}}</th>
                     <th scope="col">{{__('Item')}}</th>
-                    <th scope="col">{{__('Discount')}}</th>
+                    <th scope="col">{{__('Discount')}} %</th>
                     <th scope="col">{{__('Quantity')}}</th>
                     <th scope="col">{{__('Free Item')}}</th>
                     <th scope="col">{{__('Free Quantity')}}</th>
@@ -33,7 +33,7 @@
                         <th scope="row">{{$offer->id}}</th>
                         <td>{{$offer->user->f_name}}</td>
                         <td>{{$offer->item->name}}</td>
-                        <td>@if($offer->discount != null){{$offer->discount}}@endif</td>
+                        <td>@if($offer->discount != null){{$offer->discount}} % @endif</td>
                         <td>@if($offer->quant != null){{$offer->quant}}@endif</td>
                         <td>@if($offer->freeItem != null){{$offer->freeItem->name}}@endif</td>
                         <td>@if($offer->free_quant != null){{$offer->free_quant}}@endif</td>

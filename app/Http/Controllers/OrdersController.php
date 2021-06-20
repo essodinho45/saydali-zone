@@ -13,6 +13,7 @@ use App\Offer;
 
 class OrdersController extends Controller
 {
+    // use SendNotification;
     /**
      * Display a listing of the resource.
      *
@@ -78,6 +79,11 @@ class OrdersController extends Controller
                         }
                     }
                 }
+                // $response = $this->sendPushNotification($gCart->first()->reciever_id, $gCart->first()->sender_id, "User ".User::where('id', $gCart->first()->sender_id)->first()->f_name." ".User::where('id', $gCart->first()->sender_id)->first()->s_name." sent an order.");
+                // if($response["success"] == 1)
+                // {
+                    
+                // }
             }
         }
         $ids_to_delete = $thisCarts->pluck('id');
@@ -110,6 +116,7 @@ class OrdersController extends Controller
         $order->verified_at = now();
         $order->reciever_remark = $request['reciever_remark'];
         $order->save();
+        // $response = $this->sendPushNotification($order->reciever_id, $order->sender_id, "User ".User::where('id', $order->reciever_id)->first()->f_name." ".User::where('id', $order->reciever_id)->first()->s_name." verified an order with id ".$order->id.".");
         
         return redirect('/orders/'.$order->id);
     }
@@ -223,7 +230,7 @@ class OrdersController extends Controller
                 $item =  Item::findOrFail($request->id);
 
                 $allAgents = $item->company->children->filter(function($value, $key) {
-                if (($value['user_category_id'] == 2 || $value['user_category_id'] == 4) && $value['city'] == \Auth::user()->city) {return true;}
+                if (($value['user_category_id'] == 2 || $value['user_category_id'] == 4)) {return true;}
                 });
                 $c = collect();
 
@@ -238,7 +245,9 @@ class OrdersController extends Controller
                     $c = $c->concat($agent->children->where('user_category_id', 3));
                 }
                 $allAgents = $allAgents->concat($c);
-
+                $allAgents = $allAgents->filter(function($value, $key) {
+                    if ($value['city'] == \Auth::user()->city) {return true;}
+                    });
     
                 $favAg = \Auth::user()->children()->wherePivot('comp_id','=',$item->company->id)->get();
                 foreach($allAgents as $key => $value){

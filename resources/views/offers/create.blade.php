@@ -51,7 +51,7 @@
                                         <div class="col-md-6">
                                                 <select class="form-control" id="item_id" class="form-control @error('item_id') is-invalid @enderror" name="item_id" value="{{ old('item_id') }}">
                                                         @foreach ($items as $item)
-                                                                <option value="{{$item->id}}">{{$item->name}} {{$item->type->ar_name}} {{$item->titer}} {{__("mg")}} - {{$item->company->f_name}}</option>
+                                                                <option value="{{$item->id}}">{{$item->company->f_name}} - {{$item->name}} {{$item->titer}} {{__("mg")}}</option>
                                                         @endforeach
                                                 </select>
                                                 @error('item_id')
@@ -156,7 +156,8 @@
                                                 <td>{{$item->type->ar_name}}</td>
                                                 <td><input id="item_quant_{{$item->id}}" type="number" class="form-control w-50" name="item_quant_{{$item->id}}" value="0"></td>
                                                 <td>
-                                                    <a class="btn btn-primary btn-sm" href="#" onclick="addToBasket({{$item->id}})">{{__('Add to Basket')}}</a>
+                                                    <a class="btn btn-primary btn-sm" id="addbtn{{$item->id}}" href="#" onclick="addToBasket({{$item->id}})">{{__('Add to Basket')}}</a>
+                                                    <input type="hidden" id="added{{$item->id}}" value="false">
                                                 </td>
                                             </tr>
                                         @endforeach
@@ -222,8 +223,14 @@
 <script>
         var basketItems = [];
         function addToBasket(id) {
-                basketItems.push(id + "-" + $('#item_quant_'+id).val());
-                $("#basket_info").val(basketItems);
+                if($('#added'+id).val() == 'false')
+                {
+                        console.log($('#added'+id).val());
+                        basketItems.push(id + "-" + $('#item_quant_'+id).val());
+                        $("#basket_info").val(basketItems);
+                        $('#added'+id).val('true');
+                        $('#addbtn'+id).addClass('disabled');
+                }
         }
         $(document).ready(function() {
         // itemsOfferAjax();
