@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\User;
+use App\Country;
+use App\City;
 use App\Http\Controllers\LoginController;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Auth\Events\Registered;
@@ -141,5 +143,11 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'api_token' => Str::random(60),
         ]);
+    }
+    public function showRegistrationForm()
+    {
+        $countries=Country::all();
+        $cities=City::where('country', '1')->get();
+        return view('auth.register', ['countries'=>$countries, 'cities'=>$cities]);
     }
 }

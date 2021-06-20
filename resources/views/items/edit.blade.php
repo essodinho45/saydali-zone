@@ -48,7 +48,7 @@
                                             <select class="form-control" id="item_type_id" class="form-control @error('item_type_id') is-invalid @enderror" name="item_type_id" value="{{ $item->item_type_id }}">
                                                 {{-- <option value="" selected disabled>{{ __('Item Type') }}</option> --}}
                                                 @foreach ($types as $type)
-                                                <option value="{{$type->id}}">{{ $type->ar_name }}</option>
+                                                <option value="{{$type->id}}" @if($item->item_type_id == $type->id) selected @endif>{{ $type->ar_name }}</option>
                                                 @endforeach
                                             </select>
                                             @error('item_type_id')

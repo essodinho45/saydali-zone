@@ -56512,11 +56512,11 @@
             key: "26026315a5f5119a4d48",
             cluster: "ap2",
             forceTLS: true,
-            auth: {
-                headers: {
-                    Authorization: 'Bearer ' + YourTokenLogin
-                }
-            } // wsHost: window.location.hostname,
+            // auth: {
+            //     headers: {
+            //         Authorization: 'Bearer ' + YourTokenLogin
+            //     }
+            // } // wsHost: window.location.hostname,
             // wsPort: 6001,
 
         });
