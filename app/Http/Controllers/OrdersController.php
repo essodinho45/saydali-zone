@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use DB;
+use Carbon\Carbon;
+use Cookie;
 use Illuminate\Http\Request;
 use App\Item;
 use App\User;
@@ -24,7 +26,10 @@ class OrdersController extends Controller
         try
         {
             if(in_array(\Auth::user()->user_category_id, [2,3,4]))
-                $orders = Order::where('reciever_id', \Auth::user()->id)->get();
+                {
+                    $orders = Order::where('reciever_id', \Auth::user()->id)->get();
+                    Cookie::queue('last-seen-orders', $orders->last()->id);
+                }
             else if(\Auth::user()->user_category_id == 5)
                 $orders = Order::where('sender_id', \Auth::user()->id)->get();
             else if(\Auth::user()->user_category_id == 0)

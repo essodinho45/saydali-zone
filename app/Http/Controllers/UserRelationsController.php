@@ -165,6 +165,8 @@ class UserRelationsController extends Controller
             foreach($child->children as $chd)
                 if (!$agents->contains('id', $chd->id))
                     $agents->push($chd);
+        $agents = $agents->where('city', \Auth::user()->city);
+        // dd($agents);
         return view('userRelations.FavAg.create', ['agents'=>$agents,'comps'=>$comps]);
     }
     protected function ajaxFavAgRequest(Request $request)
@@ -172,11 +174,12 @@ class UserRelationsController extends Controller
         try{
             // dd(request()->comp);
         $comp =  User::findOrFail(request()->comp);
-        $response = $comp->children->whereIn('user_category_id',[2,3,4])->where('city', \Auth::user()->city);
+        $response = $comp->children->whereIn('user_category_id',[2,3,4]);
         foreach($comp->children->where('user_category_id',2) as $child)
             foreach($child->children as $chd)
                 if (!$response->contains('id', $chd->id))
-                    $response->push($chd);        
+                    $response->push($chd);
+        $response = $response->where('city', \Auth::user()->city);
         return $response;}
         catch(\Exception $e){return dd($e);}
     }

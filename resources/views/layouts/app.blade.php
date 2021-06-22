@@ -65,7 +65,15 @@
                             </li>
                             @if(Auth::user()->user_category_id != 1)
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('orders') }}">{{ __('Orders') }}</a>
+                                <a class="nav-link" href="{{ route('orders') }}">                                
+                                    {{ __('Orders') }}
+                                    @if(Auth::user()->user_category_id != 1 && Auth::user()->user_category_id != 5 && Auth::user()->user_category_id != 0)
+                                    <span class="fa fa-stack has-badge h-auto w-auto pl-3 pb-3" @if(Auth::user()->ordersToUser()->where('id', '>',  (Cookie::get('last-seen-orders') ?? 0))->count() > 0)data-count="{{Auth::user()->ordersToUser()->where('id', '>',  (Cookie::get('last-seen-orders') ?? 0))->count()}}"@endif>
+                                        <i class="fa fa-stack-1x"></i>
+                                    </span>
+                                    {{-- {{(Cookie::get('last-seen-orders')??0)}}_____{{Auth::user()->ordersToUser()->where('id', '>',  (Cookie::get('last-seen-orders') ?? 0))->count()}} --}}
+                                    @endif
+                                </a>
                             </li>
                             @endif
                             @if(Auth::user()->user_category_id != 5)
