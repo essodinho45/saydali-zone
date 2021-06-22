@@ -64,12 +64,12 @@
                                             <th scope="row" rowspan="2">{{$item->id}}</th>
                                             <td>{{$item->name}}</td>
                                             <td>{{$item->company->f_name}}</td>
-                                            <td>{{$item->price}}</td>
+                                            <td>{{round($item->price,2)}}</td>
                                             <td>{{$item->type->ar_name}}</td>
                                             <td>{{$item->pivot->quantity}}</td>
                                             <td>{{$item->pivot->free_quant}}</td>
-                                            <td>{{$item->pivot->quantity * $item->price}} {{__("S.P.")}}</td>
-                                            <td>{{$item->pivot->price}} {{__("S.P.")}}</td>
+                                            <td>{{round($item->pivot->quantity * $item->price, 2)}} {{__("S.P.")}}</td>
+                                            <td>{{round($item->pivot->price,2)}} {{__("S.P.")}}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="3">{{__('Sender Remark')}}: {{$item->pivot->sender_remark}}</td>
@@ -89,12 +89,12 @@
                                             <th scope="row">{{$item->id}}</th>
                                             <td>{{__('Basket')}}</td>
                                             <td>{{$item->user->f_name}}</td>
-                                            <td>{{$item->price}}</td>
+                                            <td>{{round($item->price,2)}}</td>
                                             <td></td>
                                             <td></td>
                                             <td>{{$item->pivot->quantity}}</td>
                                             <td></td>
-                                            <td>{{$item->pivot->quantity * $item->price}} {{__("S.P.")}}</td>
+                                            <td>{{round($item->pivot->quantity * $item->price, 2)}} {{__("S.P.")}}</td>
                                         </tr>
                                         <tr>
                                             <td colspan="9">
@@ -132,7 +132,7 @@
                     </p> --}}
                     <h4>{{__('Total Price')}}</h4>
                     <h6>
-                        {{$order->price}} {{__('S.P.')}}
+                        {{round($order->price,2)}} {{__('S.P.')}}
                     </h6>
                 </div>
             </div>

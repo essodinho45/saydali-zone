@@ -31,7 +31,7 @@
                       <td>{{$item->item->company->f_name}}</td>
                       <td>{{$item->quantity}}</td>
                       <td>@if(!$item->is_basket){{$item->free_quant}}@endif</td>
-                      <td>{{$item->price}}</td>
+                      <td>{{round($item->price,2)}}</td>
                       <td>
                         <form action="{{route('deleteCart',['id' => $item->id])}}" method="POST" class="d-inline-block">
                         @csrf

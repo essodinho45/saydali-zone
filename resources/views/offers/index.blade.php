@@ -77,7 +77,7 @@
                         <tr data-toggle="collapse" class="clickable" data-target="#collapseBItems{{$basket->id}}" aria-expanded="false" aria-controls="collapseBItems{{$basket->id}}">
                         <th scope="row" rowspan="2">{{$basket->id}}</th>
                         <td>{{$basket->user->f_name}}</td>
-                        <td>{{$basket->price}}</td>
+                        <td>{{round($basket->price,2)}}</td>
                         <td>{{date('d-m-Y', strtotime($basket->from_date))}}</td>
                         <td>{{date('d-m-Y', strtotime($basket->to_date))}}</td>
                         {{-- <td>@if($offer->discount != null){{$offer->discount}}@endif</td>

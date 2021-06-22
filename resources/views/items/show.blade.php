@@ -55,14 +55,14 @@
                             <div class="col-md-3">
                             <h6>{{__('Price')}}</h6>
                             <p>
-                                {{$item->price}} {{__('S.P.')}}
+                                {{round($item->price, 2)}} {{__('S.P.')}}
                             </p>
                             </div>
                             <div class="col-md-3">
                             @if($item->customer_price != null)
                             <h6>{{__('Customer Price')}}</h6>
                             <p>
-                                {{$item->customer_price}} {{__('S.P.')}}
+                                {{round($item->customer_price, 2)}} {{__('S.P.')}}
                             </p>
                             @endif
                             </div>

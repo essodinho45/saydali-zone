@@ -59,8 +59,8 @@
                         <th scope="row">{{$item->id}}</th>
                         <td>{{$item->name}}</td>
                         <td>{{$item->company->f_name}}</td>
-                        <td>{{$item->price}}</td>
-                        <td>{{$item->customer_price}}</td>
+                        <td>{{round($item->price,2)}}</td>
+                        <td>{{round($item->customer_price,2)}}</td>
                         <td> @if($item->type != null) {{$item->type->ar_name}} @endif </td>
                         <td class="d-none">{{$item->composition}}</td>
                         <td class="d-none">{{$item->barcode}}</td>
@@ -138,7 +138,7 @@
                             <tr data-toggle="collapse" class="clickable" data-target="#collapseBItems{{$basket->id}}" aria-expanded="false" aria-controls="collapseBItems{{$basket->id}}">
                             <th scope="row"  rowspan="2">{{$basket->id}}</th>
                             <td>{{$basket->user->f_name}}</td>
-                            <td>{{$basket->price}}</td>
+                            <td>{{round($basket->price,2)}}</td>
                             <td>{{date('d-m-Y', strtotime($basket->from_date))}}</td>
                             <td>{{date('d-m-Y', strtotime($basket->to_date))}}</td>
                             {{-- <td>@if($offer->discount != null){{$offer->discount}}@endif</td>

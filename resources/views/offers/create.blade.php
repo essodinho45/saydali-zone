@@ -151,8 +151,8 @@
                                                 <th scope="row">{{$item->id}}</th>
                                                 <td>{{$item->name}}</td>
                                                 <td>{{$item->company->f_name}}</td>
-                                                <td>{{$item->price}}</td>
-                                                <td>{{$item->customer_price}}</td>
+                                                <td>{{round($item->price,2)}}</td>
+                                                <td>{{round($item->customer_price,2)}}</td>
                                                 <td>{{$item->type->ar_name}}</td>
                                                 <td><input id="item_quant_{{$item->id}}" type="number" class="form-control w-50" name="item_quant_{{$item->id}}" value="0"></td>
                                                 <td>

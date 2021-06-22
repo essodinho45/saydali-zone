@@ -88,7 +88,7 @@
                     <td>{{$order->reciever->f_name}} {{$order->reciever->s_name}}</td>
                     <td>{{$order->created_at->format('d/m/Y')}}</td>
                     <td class="cvrt2tz">{{$order->created_at->format('H:i:s')}}</td>
-                    <td>{{$order->price}}</td>
+                    <td>{{round($order->price,2)}}</td>
                     {{-- <td>@if($order->verified_at!=null){{$order->verified_at->format('d/m/Y')}}@else - @endif</td> --}}
                     <td>
                         <a class="btn btn-primary btn-sm" href="{{ route('showOrder', ['id'=>$order->id]) }}">{{__('Show')}}</a>                        
@@ -100,7 +100,7 @@
     </div>
     </div>
     <div class="mt-4" id="totalCount">
-        <h3>{{__('Total Price')}} :&nbsp; {{$orders->sum('price')}}&nbsp;{{__('S.P.')}}</h3>
+        <h3>{{__('Total Price')}} :&nbsp; {{round($orders->sum('price'), 2)}}&nbsp;{{__('S.P.')}}</h3>
         <h5>{{__('Orders Count')}} :&nbsp; {{$orders->count()}}</h5>
     </div>
     @endif
