@@ -63,6 +63,7 @@ class OffersController extends Controller
                 $offer = new Basket();
                 $offer->user_id = \Auth::user()->id;
                 $offer->remark = $request->remark;
+                $offer->name = $request->name;
                 $offer->price = $request->price;
                 $offer->from_date = $request->from_date;
                 $offer->to_date = $request->to_date;

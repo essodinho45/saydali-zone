@@ -6,7 +6,7 @@
     <h3 class="w-75 d-inline-block">{{__('Orders')}}</h3>
     @if (Auth::user()->user_category_id != 1)
         <hr>
-    <div class="table-responsive">
+    <div class="table-responsive-md">
     <table class="table table-hover table-sm table-bordered nowrap mt-2" id="OrdersTable">
         <thead>
         <tr>

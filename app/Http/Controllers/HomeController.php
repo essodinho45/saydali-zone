@@ -157,7 +157,10 @@ class HomeController extends Controller
         if(\Auth::user()->user_category_id == 0 || \Auth::user()->user_category_id == 1 || \Auth::user()->user_category_id == 2)
         {
             $agents = User::where('user_category_id', 2)->get();
+            if (\Auth::user()->user_category_id != 2)
             $comps = User::where('user_category_id', 1)->get();
+            else
+            $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
         }
         return view('auth.register', ['countries'=> $countries, 'cities' => $cities, 'comps' => $comps, 'agents' => $agents]);
     }
@@ -214,7 +217,7 @@ class HomeController extends Controller
             elseif($request['user_category_id'] == 3)
             {
                 $user->parents()->attach($request['agent']);
-                DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?',[true,$request['agent'],$user->id]);
+                DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?',[true,$request['agent'],$user->id]);                
             }
             return redirect()->route('allUsers');
         }
@@ -222,6 +225,21 @@ class HomeController extends Controller
         {
             User::findOrFail(\Auth::user()->id)->children()->attach($user->id);
             DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?',[true,\Auth::user()->id,$user->id]);
+            if(\Auth::user()->category->id == 2)
+            {
+                $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
+                foreach($comps as $key => $value){
+                    foreach($request['comps'] as $comp)
+                    {
+                        if($value->id == $comp)
+                            $comps->forget($key);
+                    }
+                }
+                foreach($comps as $comp){
+                    DB::table('dists_comps')->insert(['dist_id' => $user->id, 'comp_id' => $comp->id]
+                    );
+                }
+            }
             if(\Auth::user()->category->id == 1)
                 return redirect()->route('agents');
             return redirect()->route('distributors');

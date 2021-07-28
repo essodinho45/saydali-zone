@@ -11,7 +11,7 @@
                 @endif
             @endauth
 
-            <div class="table-responsive">
+            <div class="table-responsive-md">
             <table class="table table-hover table-sm table-bordered nowrap mt-2" id="offersTable">
                 <thead>
                 <tr>
@@ -59,11 +59,12 @@
             </div>
             <hr>
             <h3 class="w-75 d-inline-block">{{__('Baskets')}}</h3>
-            <div class="table-responsive">
+            <div class="table-responsive-md">
             <table class="table table-hover table-sm table-bordered nowrap mt-2 accordion" id="basketsTable">
                 <thead>
                 <tr>
                     <th scope="col">#</th>
+                    <th scope="col">{{__('Name')}}</th>
                     <th scope="col">{{__('Company')}}</th>
                     <th scope="col">{{__('Price')}}</th>
                     <th scope="col">{{__('From Date')}}</th>
@@ -76,6 +77,7 @@
                 @foreach ($baskets as $basket)
                         <tr data-toggle="collapse" class="clickable" data-target="#collapseBItems{{$basket->id}}" aria-expanded="false" aria-controls="collapseBItems{{$basket->id}}">
                         <th scope="row" rowspan="2">{{$basket->id}}</th>
+                        <td>{{$basket->name}}</td>
                         <td>{{$basket->user->f_name}}</td>
                         <td>{{round($basket->price,2)}}</td>
                         <td>{{date('d-m-Y', strtotime($basket->from_date))}}</td>

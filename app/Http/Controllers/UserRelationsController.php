@@ -161,11 +161,19 @@ class UserRelationsController extends Controller
     {
         $comps = User::where('user_category_id',1)->get();
         $agents = $comps->first()->children->whereIn('user_category_id',[2,3,4]);
+        $non_allowed_ids = DB::table('dists_comps')->select('dist_id')->where('comp_id', $comps->first()->id)->get();
         foreach($agents->where('user_category_id',2) as $child)
             foreach($child->children as $chd)
                 if (!$agents->contains('id', $chd->id))
                     $agents->push($chd);
         $agents = $agents->where('city', \Auth::user()->city);
+        foreach($agents as $key => $value){
+            foreach($non_allowed_ids as $id){
+                if($id->dist_id == $value->id){
+                    $agents->forget($key);
+                }
+            }
+        }
         // dd($agents);
         return view('userRelations.FavAg.create', ['agents'=>$agents,'comps'=>$comps]);
     }
@@ -174,12 +182,20 @@ class UserRelationsController extends Controller
         try{
             // dd(request()->comp);
         $comp =  User::findOrFail(request()->comp);
+        $non_allowed_ids = DB::table('dists_comps')->select('dist_id')->where('comp_id', $comp->id)->get();
         $response = $comp->children->whereIn('user_category_id',[2,3,4]);
         foreach($comp->children->where('user_category_id',2) as $child)
             foreach($child->children as $chd)
                 if (!$response->contains('id', $chd->id))
                     $response->push($chd);
         $response = $response->where('city', \Auth::user()->city);
+        foreach($response as $key => $value){
+            foreach($non_allowed_ids as $id){
+                if($id->dist_id == $value->id){
+                    $response->forget($key);
+                }
+            }
+        }
         return $response;}
         catch(\Exception $e){return dd($e);}
     }

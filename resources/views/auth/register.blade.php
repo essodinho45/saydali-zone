@@ -184,7 +184,7 @@
                                 </div>
 
                             <div class="col-md-3">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password" placeholder="{{ __('Confirm Password') }}">
+                                <input id="password-confirm" type="password" class="form-control" name="password-confirm" required autocomplete="new-password" placeholder="{{ __('Confirm Password') }}">
                             </div>
                         </div>
                         @guest
@@ -365,10 +365,12 @@
                             </div>
                         </div>
                         @auth
+                        @if(auth()->user()->user_category_id != 2)
                         <div class="form-group row d-none" id="company_div">
                             <label class="col-md-3 text-right" for="company">{{__("Company")}}</label>
                             <div class="col-md-6">
                                 <select class="form-control" id="company" class="form-control @error('company') is-invalid @enderror" name="company" value="{{ old('company') }}">
+                                    <option value="">{{__("Select Company")}}</option>
                                     @foreach ($comps as $comp)
                                         <option value="{{$comp->id}}" @if(old('company') == $comp->id) selected @endif>{{$comp->f_name}}</option>
                                     @endforeach
@@ -379,11 +381,29 @@
                                     </span>
                                 @enderror
                             </div>
-                        </div>                            
+                        </div>
+                        @else
+                        <div class="form-group row" id="comps_div">
+                            <label class="col-md-3 text-right" for="comps">{{__("Company")}}</label>
+                            <div class="col-md-6">
+                                <select class="form-control" id="comps" class="form-control @error('comps') is-invalid @enderror" name="comps[]" value="{{ old('comps') }}" multiple>
+                                    @foreach ($comps as $comp)
+                                        <option value="{{$comp->id}}" @if(old('company') == $comp->id) selected @endif>{{$comp->f_name}}</option>
+                                    @endforeach
+                                </select>
+                                @error('company')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        </div>
+                        @endif
                         <div class="form-group row d-none" id="agent_div">
                             <label class="col-md-3 text-right" for="agent">{{__("Agent")}}</label>
                             <div class="col-md-6">
                                 <select class="form-control" id="agent" class="form-control @error('agent') is-invalid @enderror" name="agent" value="{{ old('agent') }}">
+                                    <option value="">{{__("Select Agent")}}</option>
                                     @foreach ($agents as $agent)
                                         <option value="{{$agent->id}}" @if(old('agent') == $agent->id) selected @endif>{{$agent->f_name}}&nbsp;@if($agent->s_name!=null){{$agent->s_name}} @endif </option>
                                     @endforeach

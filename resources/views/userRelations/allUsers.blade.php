@@ -8,7 +8,7 @@
                 {{__("Create User")}}
             </button>
             <hr>
-            <div class="table-responsive">
+            <div class="table-responsive-md">
         <table class="table table-hover table-sm table-bordered nowrap mt-2" id="usersTable">
             <thead>
             <tr>

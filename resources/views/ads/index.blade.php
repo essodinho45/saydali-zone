@@ -6,7 +6,7 @@
                 <button class="btn btn-info float-right" type="submit" onclick="window.location='{{route('createAds')}}'">
                     {{__("Create Ad")}}
                 </button>
-        <div class="table-responsive">
+        <div class="table-responsive-md">
             <table class="table table-hover table-sm table-bordered mt-2" id="adsTable">
                 <thead>
                 <tr>

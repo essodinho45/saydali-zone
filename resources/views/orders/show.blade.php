@@ -42,7 +42,7 @@
                     </div>
                     <hr>
                     <h6>{{__('Items')}}</h6>
-                    <div class="table-responsive">
+                    <div class="table-responsive-md">
                             <table class="table table-hover table-sm table-bordered mt-2" id="ItemsTable">
                                     <thead>
                                     <tr>

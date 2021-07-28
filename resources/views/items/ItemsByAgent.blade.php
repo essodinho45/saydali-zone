@@ -29,7 +29,7 @@
                         </button>
                     @endif
                 <hr>
-        <div class="table-responsive">
+        <div class="table-responsive-md">
             <table class="table table-hover table-sm table-bordered nowrap mt-2" id="ItemsTable">
                 <thead>
                 <tr>
@@ -113,7 +113,7 @@
         </div>
             <hr>
                 <h3 class="w-75 d-inline-block">{{__('Baskets')}}</h3>
-        <div class="table-responsive">
+        <div class="table-responsive-md">
             <table class="table table-hover table-sm table-bordered nowrap mt-2 accordion" id="basketsTable">
                     <thead>
                     <tr>

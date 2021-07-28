@@ -335,3 +335,9 @@ body {
     bottom: 0;
     width: 100%;
 }
+
+.crslimg {
+    height: 150px;
+    object-fit: cover;
+    width: 900px !important;
+}

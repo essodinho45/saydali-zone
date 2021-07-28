@@ -132,6 +132,18 @@
 
                         </div>
                         <div id="basket" style="display:none;">
+                                <div class="form-group row">
+                                        <label class="col-md-3" for="name">{{__("Name")}}</label>
+                                        <div class="col-md-6">
+                                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}">
+    
+                                                @error('name')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                        </div>
+                                </div>
                                 <table class="table table-hover table-sm mt-2" id="ItemsTable">
                                         <thead>
                                         <tr>
@@ -156,7 +168,8 @@
                                                 <td>{{$item->type->ar_name}}</td>
                                                 <td><input id="item_quant_{{$item->id}}" type="number" class="form-control w-50" name="item_quant_{{$item->id}}" value="0"></td>
                                                 <td>
-                                                    <a class="btn btn-primary btn-sm" id="addbtn{{$item->id}}" href="#" onclick="addToBasket({{$item->id}})">{{__('Add to Basket')}}</a>
+                                                    <a class="btn btn-primary btn-sm" id="addbtn{{$item->id}}" href="#ItemsTable" onclick="addToBasket({{$item->id}})">{{__('Add to Basket')}}</a>
+                                                    <a class="btn btn-danger btn-sm disabled" id="delbtn{{$item->id}}" href="#ItemsTable" onclick="removeFromBasket({{$item->id}})">{{__('Delete')}}</a>
                                                     <input type="hidden" id="added{{$item->id}}" value="false">
                                                 </td>
                                             </tr>
@@ -226,11 +239,28 @@
                 if($('#added'+id).val() == 'false')
                 {
                         console.log($('#added'+id).val());
-                        basketItems.push(id + "-" + $('#item_quant_'+id).val());
+                        basketItems.push(id + "-" + $('#item_quant_'+id).val());                        
                         $("#basket_info").val(basketItems);
                         $('#added'+id).val('true');
                         $('#addbtn'+id).addClass('disabled');
+                        $('#delbtn'+id).removeClass('disabled');
                 }
+        }
+        function removeFromBasket(id){
+                if($('#added'+id).val() == 'true')
+                {
+                        console.log($('#added'+id).val());
+                        var result = basketItems.find((item) => { return item.startsWith(id);});
+                        var index = basketItems.indexOf(result);
+                        if (index !== -1) {
+                        basketItems.splice(index, 1);
+                        }
+                        $("#basket_info").val(basketItems);
+                        $('#added'+id).val('false');
+                        $('#item_quant_'+id).val(0);
+                        $('#delbtn'+id).addClass('disabled');
+                        $('#addbtn'+id).removeClass('disabled');
+                }                
         }
         $(document).ready(function() {
         // itemsOfferAjax();

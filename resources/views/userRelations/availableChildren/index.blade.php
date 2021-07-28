@@ -26,7 +26,7 @@
                 @endif
             @endif
             <hr>
-        <div class="table-responsive">
+        <div class="table-responsive-md">
         <table class="table table-hover table-bordered table-sm mt-2" id="childrenTable">
             <thead>
             <tr>

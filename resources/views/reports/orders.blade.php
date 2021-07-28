@@ -66,7 +66,7 @@
                 </div>
             </div>            
         </div>
-        <div class="col-12 mt-4 table-responsive">
+        <div class="col-12 mt-4 table-responsive-md">
         <table class="table table-hover table-sm table-bordered nowrap" id="OrdersTable">
             <thead>
             <tr>

@@ -15,6 +15,7 @@
                             <label class="col-md-3 text-right" for="company">{{__("Company")}} *</label>                            
                                 <div class="col-md-6">
                                     <select class="form-control" id="companyFavAg" class="form-control @error('company') is-invalid @enderror" name="company" value="{{ old('company') }}">
+                                        <option value="">{{__('Select Company')}}</option>
                                         @foreach ( $comps as $comp)
                                             <option value="{{$comp->id}}">{{$comp->f_name}}</option>                                            
                                         @endforeach
@@ -31,6 +32,7 @@
                             <label class="col-md-3 text-right" for="agent">{{__("Agent")}} / {{__('Distributor')}} *</label>                            
                                 <div class="col-md-6">
                                     <select class="form-control" id="agentFavAg" class="form-control @error('agent') is-invalid @enderror" name="agent" value="{{ old('agent') }}">
+                                    <option value="">{{__('Select Agent')}}</option>
                                         @foreach ( $agents as $agent)
                                             <option value="{{$agent->id}}">{{$agent->f_name}}&nbsp;{{$agent->s_name}}</option>                                            
                                         @endforeach
@@ -86,6 +88,9 @@ $(document).ready(function() {
            data:{comp:comp},
            success:function(data){
             console.log(data);
+            var op0 = new Option("{{__('Select Agent')}}" , '');
+            $(op0).html("{{__('Select Agent')}}");
+            $("#agentFavAg").append(op0);
             $.each( data, function( key) {
               var o = new Option(data[key].f_name+" "+data[key].s_name, data[key].id);
               /// jquerify the DOM object 'o' so we can use the html method

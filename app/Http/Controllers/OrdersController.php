@@ -156,6 +156,15 @@ class OrdersController extends Controller
     {
         try{
         $freeQuant = 0;
+        $offersAgents = [];
+        $reciever = User::findOrFail($request->reciever_id);
+        // dd($reciever->category->id);
+        if($reciever->category->id != 2){
+            $recieverParents = User::findOrFail($request->reciever_id)->parents;
+            $offersAgents = $recieverParents->where('user_category_id', 2)->pluck('id');
+        }
+        else
+            $offersAgents[] = (int)$request->reciever_id;
         $cart = Cart::where(['sender_id' => \Auth::user()->id,'reciever_id'=>$request->reciever_id, 'item_id' => $request->item_id, 'is_basket'=>($request->isBasket == "true")])->get();
         if($cart->count() == 0){
             $cart = new Cart([
@@ -173,7 +182,7 @@ class OrdersController extends Controller
             else
                 {
                     $item = Item::findOrFail($request->item_id);
-                    $currentOffers=$item->offers->where('to_date','>=',now())->where('user_id', $request->reciever_id);
+                    $currentOffers=$item->offers->where('to_date','>=',now())->whereIn('user_id', $offersAgents);
                     if($currentOffers->count() > 0 && $currentOffers->where('discount','>', 0)->count() > 0 && $request->quantity >= $currentOffers->where('discount','>', 0)->first->quantity)
                     {
                         $item->price -= (float)$item->price * ($currentOffers->where('discount','>', 0)->first->discount->discount/100);
@@ -196,7 +205,7 @@ class OrdersController extends Controller
             else
             {
                 $item = Item::findOrFail($request->item_id);
-                $currentOffers=$item->offers->where('to_date','>=',now())->where('user_id', $request->reciever_id);
+                $currentOffers=$item->offers->where('to_date','>=',now())->whereIn('user_id', $offersAgents);
                 if($currentOffers->count() > 0 && $currentOffers->where('discount','>', 0)->count() > 0 && $quantity >= $currentOffers->where('discount','>', 0)->first->quantity)
                 {
                     $item->price -= $item->price * ($currentOffers->where('discount','>', 0)->first->discount->discount/100);
@@ -238,6 +247,7 @@ class OrdersController extends Controller
                 if (($value['user_category_id'] == 2 || $value['user_category_id'] == 4)) {return true;}
                 });
                 $c = collect();
+                $non_allowed_ids = DB::table('dists_comps')->select('dist_id')->where('comp_id', $item->company->id)->get();
 
                 foreach($allAgents as $key => $value){
                 $isFreezed = (bool)(DB::table('user_relations')->where(['child_id'=> $value->id, 'parent_id'=>$item->company->id])->value('freezed'));
@@ -268,6 +278,13 @@ class OrdersController extends Controller
                         $allAgents->forget($key);
                     }
                 }
+                foreach($allAgents as $key => $value){
+                    foreach($non_allowed_ids as $id){
+                        if($id->dist_id == $value->id){
+                            $allAgents->forget($key);
+                        }
+                    }
+                }
             }
         }
         catch(\Exception $e){dd($e);}
@@ -275,9 +292,18 @@ class OrdersController extends Controller
     }
     public function postItemAgent(Request $request)
     {
+        $offersAgents = [];
         $item =  Item::findOrFail($request->item);
+        $reciever = User::findOrFail($request->id);
+        // dd($reciever->category->id);
+        if($reciever->category->id != 2){
+            $recieverParents = User::findOrFail($request->id)->parents;
+            $offersAgents = $recieverParents->where('user_category_id', 2)->pluck('id');
+        }
+        else
+            $offersAgents[] = (int)$request->id;
         try{
-            $offer = $item->offers->where('to_date', '>=', now())->where('user_id',$request->id);
+            $offer = $item->offers->where('to_date', '>=', now())->whereIn('user_id', $offersAgents);
         }
         catch(\Exception $e){return dd($e);}
         return $offer;

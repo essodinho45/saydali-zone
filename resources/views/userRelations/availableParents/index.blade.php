@@ -7,7 +7,7 @@
                 <h3 class="w-75 d-inline-block">{{__('Companies')}}</h3>
             @endif
             <hr>
-        <div class="table-responsive">
+        <div class="table-responsive-md">
         <table class="table table-hover table-bordered table-sm mt-2" id="parentsTable">
             <thead>
             <tr>

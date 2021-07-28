@@ -10,7 +10,7 @@
                   <img class="img-fluid rounded-circle mx-2 mb-4" width="36px" src="{{ asset($cart->first()->reciever->logo_image) }}">
                   <h4>{{__("Reciever")}} : {{$cart->first()->reciever->f_name}} {{$cart->first()->reciever->s_name}}</h4>
           </div>
-          <div class="table-responsive">
+          <div class="table-responsive-md">
           <table class="table table-hover table-sm table-bordered mt-2" id="CartTable">
               <thead>
               <tr>

@@ -10,6 +10,7 @@ use App\User;
 use App\Basket;
 use App\ItemType;
 use App\Advertisement;
+use DB;
 
 
 class ItemsController extends Controller
@@ -35,6 +36,8 @@ class ItemsController extends Controller
                 }
             elseif(\Auth::user()->user_category_id == 3)
             {
+                $non_allowed_ids = DB::table('dists_comps')->select('comp_id')->where('dist_id', \Auth::user()->id)->get();
+                // dd($non_allowed_ids);
                 // $parents = \Auth::user()->parents->where('user_category_id',2);                
                 $parents = \Auth::user()->parents()->where('user_category_id',2)->wherePivot('verified', '=', true)->wherePivot('freezed', '=', false)->get();
                 $compsIdArr = [];
@@ -47,6 +50,10 @@ class ItemsController extends Controller
                 // {
                 //     array_push($compsIdArr, $p->parents->pluck('id'));
                 // }
+                foreach($non_allowed_ids as $id)
+                {
+                    $compsIdArr = \array_diff($compsIdArr, [$id->comp_id]);
+                }
                 $items = Item::whereIn('user_id', $compsIdArr)->get();
                 $baskets = Basket::where('user_id', \Auth::user()->id)->get();
             }
@@ -56,7 +63,7 @@ class ItemsController extends Controller
                 $items = Item::whereIn('user_id', $parents->pluck('id')->toArray())->get();
                 $baskets = Basket::where('user_id', \Auth::user()->id)->get();   
             }
-            $ads1 = Advertisement::whereIn('position', [5])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
+            $ads1 = Advertisement::whereIn('position', [5,6])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
             $ads2 = Advertisement::whereIn('position', [6])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
             return view('items.index', ['items'=>$items, 'baskets'=>$baskets, 'ads1'=>$ads1, 'ads2'=>$ads2]);}
         catch(\Exception $e)
@@ -298,6 +305,7 @@ class ItemsController extends Controller
                     }
                 }
                 array_push($ids_array, (int)$agent_id);
+                $non_allowed_ids = DB::table('dists_comps')->select('comp_id')->where('dist_id', $agent_id)->get();
                 $items = Item::whereIn('user_id', $ids_array)->get();
                 $baskets = Basket::whereIn('user_id', $ids_array)->get();
             }
