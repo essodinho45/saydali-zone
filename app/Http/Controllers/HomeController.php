@@ -35,15 +35,17 @@ class HomeController extends Controller
         $ads1 = Advertisement::whereIn('position', [3])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
         $ads2 = Advertisement::whereIn('position', [4])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
         request()->session()->pull('message', 'default');
-        return view('home',['ads1'=>$ads1, 'ads2'=>$ads2]);
+        return view('home', ['ads1' => $ads1, 'ads2' => $ads2]);
     }
     public function showWelcome()
     {
-        try{
-        $ads = Advertisement::whereIn('position', [1,2])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
-        $posts = Post::orderBy('updated_at', 'desc')->get();
-        return view('welcome', ['posts'=>$posts, 'ads'=>$ads]);}
-        catch(\Exception $e){dd($e);}
+        try {
+            $ads = Advertisement::whereIn('position', [1, 2])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
+            $posts = Post::orderBy('updated_at', 'desc')->get();
+            return view('welcome', ['posts' => $posts, 'ads' => $ads]);
+        } catch (\Exception $e) {
+            dd($e);
+        }
 
     }
     public function showVerNote()
@@ -62,15 +64,12 @@ class HomeController extends Controller
     {
         // dd('123');
         $user = User::findOrFail($id);
-        if(request()->has('logo_image'))
-        {
+        if (request()->has('logo_image')) {
             $uploadedImg = request()->file('logo_image');
-            $fileName = '/images/logos/'.time() . '.' . $uploadedImg->getClientOriginalExtension();
+            $fileName = '/images/logos/' . time() . '.' . $uploadedImg->getClientOriginalExtension();
             $uploadPath = public_path('/images/logos/');
             $uploadedImg->move($uploadPath, $fileName);
-        }
-        else
-        {
+        } else {
             $fileName = $user->logo_image;
         }
         $user->f_name = $data['f_name'];
@@ -96,52 +95,54 @@ class HomeController extends Controller
         session(['message' => 'User updated!']);
         return redirect()->route('home');
     }
-    
+
     protected function editUser($id)
     {
-        $user =  User::findOrFail($id);
+        $user = User::findOrFail($id);
         $countries = Country::all();
-        $cities = City::where('country',$countries->first()->id)->get();
-        
-        return view('auth.edit', ['user'=>$user, 'countries'=> $countries, 'cities' => $cities]);
+        $cities = City::where('country', $countries->first()->id)->get();
+
+        return view('auth.edit', ['user' => $user, 'countries' => $countries, 'cities' => $cities]);
     }
     protected function allUsers()
     {
-        $users =  User::all();
-        
-        return view('userRelations.allUsers', ['users'=>$users]);
+        $users = User::all();
+
+        return view('userRelations.allUsers', ['users' => $users]);
     }
     protected function verUser(request $request)
     {
-        $user =  User::findOrFail($request->id);
+        $user = User::findOrFail($request->id);
         $user->email_verified_at = now();
         Mail::to($user->email)
-        ->send(new Verify());
+            ->send(new Verify());
         $user->save();
         return 'success';
     }
     protected function frzUser(request $request)
     {
-        $user =  User::findOrFail($request->id);
+        $user = User::findOrFail($request->id);
         $user->freezed = true;
         $user->save();
         return 'success';
     }
     protected function unfrzUser(request $request)
     {
-        $user =  User::findOrFail($request->id);
+        $user = User::findOrFail($request->id);
         $user->freezed = false;
         $user->save();
         return 'success';
     }
-    
+
     protected function ajaxCountryRequest(Request $request)
     {
-        try{
-        $country =  request()->country;
-        $response = City::where('country', $country)->get();
-        return $response;}
-        catch(\Exception $e){return dd($e);}
+        try {
+            $country = request()->country;
+            $response = City::where('country', $country)->get();
+            return $response;
+        } catch (\Exception $e) {
+            return dd($e);
+        }
     }
 
     /**
@@ -153,104 +154,91 @@ class HomeController extends Controller
     public function createUserByAdminForm()
     {
         $countries = Country::all();
-        $cities = City::where('country',$countries->first()->id)->get();
-        if(\Auth::user()->user_category_id == 0 || \Auth::user()->user_category_id == 1 || \Auth::user()->user_category_id == 2)
-        {
+        $cities = City::where('country', $countries->first()->id)->get();
+        if (\Auth::user()->user_category_id == 6 || \Auth::user()->user_category_id == 1 || \Auth::user()->user_category_id == 2) {
             $agents = User::where('user_category_id', 2)->get();
             if (\Auth::user()->user_category_id != 2)
-            $comps = User::where('user_category_id', 1)->get();
+                $comps = User::where('user_category_id', 1)->get();
             else
-            $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
+                $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
         }
-        return view('auth.register', ['countries'=> $countries, 'cities' => $cities, 'comps' => $comps, 'agents' => $agents]);
+        return view('auth.register', ['countries' => $countries, 'cities' => $cities, 'comps' => $comps, 'agents' => $agents]);
     }
     protected function createUserByAdmin(request $request)
     {
-        try{
-        if(request()->has('logo_image'))
-        {
-            $uploadedImg = request()->file('logo_image');
-            $fileName = time() . '.' . $uploadedImg->getClientOriginalExtension();
-            $uploadPath = public_path('/images/logos/');
-            $uploadedImg->move($uploadPath, $fileName);
-        }
-        else
-        {
-            $fileName = 'default_logo';
-        }
-        if($request['password'] != $request['password-confirm'])
-        {
-            abort(500);
-            return;
-        }
-        $user = User::create([
-            'f_name' => $request['f_name'],
-            's_name' => $request['s_name'],
-            'username' => $request['username'],
-            'commercial_name' => $request['commercial_name'],
-            'user_category_id' => $request['user_category_id'],
-            'email' => $request['email'],
-            'email2' => $request['email2'],
-            'licence_number' => $request['licence_number'],
-            'country' => $request['country'],
-            'city' => $request['city'],
-            'region' => $request['region'],
-            'address' => $request['address'],
-            'tel1' => $request['tel1'],
-            'tel2' => $request['tel2'],
-            'mob1' => $request['mob1'],
-            'mob2' => $request['mob2'],
-            'fax1' => $request['fax1'],
-            'fax2' => $request['fax2'],
-            'logo_image' => '/images/logos/'.$fileName,
-            'password' => Hash::make($request['password']),
-        ]);
-        $user->email_verified_at = now();
-        $user->save();
-        if(\Auth::user()->category->id == 0)
-        {
-            if($request['user_category_id'] == 2)
-            {
-                $user->parents()->attach($request['company']);
-                DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?',[true,$request['company'],$user->id]);
+        try {
+            if (request()->has('logo_image')) {
+                $uploadedImg = request()->file('logo_image');
+                $fileName = time() . '.' . $uploadedImg->getClientOriginalExtension();
+                $uploadPath = public_path('/images/logos/');
+                $uploadedImg->move($uploadPath, $fileName);
+            } else {
+                $fileName = 'default_logo';
             }
-            elseif($request['user_category_id'] == 3)
-            {
-                $user->parents()->attach($request['agent']);
-                DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?',[true,$request['agent'],$user->id]);                
+            if ($request['password'] != $request['password-confirm']) {
+                abort(500);
+                return;
             }
-            return redirect()->route('allUsers');
-        }
-        elseif(\Auth::user()->category->id == 1 || \Auth::user()->category->id == 2)
-        {
-            User::findOrFail(\Auth::user()->id)->children()->attach($user->id);
-            DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?',[true,\Auth::user()->id,$user->id]);
-            if(\Auth::user()->category->id == 2)
-            {
-                $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
-                foreach($comps as $key => $value){
-                    foreach($request['comps'] as $comp)
-                    {
-                        if($value->id == $comp)
-                            $comps->forget($key);
+            $user = User::create([
+                'f_name' => $request['f_name'],
+                's_name' => $request['s_name'],
+                'username' => $request['username'],
+                'commercial_name' => $request['commercial_name'],
+                'user_category_id' => $request['user_category_id'],
+                'email' => $request['email'],
+                'email2' => $request['email2'],
+                'licence_number' => $request['licence_number'],
+                'country' => $request['country'],
+                'city' => $request['city'],
+                'region' => $request['region'],
+                'address' => $request['address'],
+                'tel1' => $request['tel1'],
+                'tel2' => $request['tel2'],
+                'mob1' => $request['mob1'],
+                'mob2' => $request['mob2'],
+                'fax1' => $request['fax1'],
+                'fax2' => $request['fax2'],
+                'logo_image' => '/images/logos/' . $fileName,
+                'password' => Hash::make($request['password']),
+            ]);
+            $user->email_verified_at = now();
+            $user->save();
+            if (\Auth::user()->category->id == 6) {
+                if ($request['user_category_id'] == 2) {
+                    $user->parents()->attach($request['company']);
+                    DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?', [true, $request['company'], $user->id]);
+                } elseif ($request['user_category_id'] == 3) {
+                    $user->parents()->attach($request['agent']);
+                    DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?', [true, $request['agent'], $user->id]);
+                }
+                return redirect()->route('allUsers');
+            } elseif (\Auth::user()->category->id == 1 || \Auth::user()->category->id == 2) {
+                User::findOrFail(\Auth::user()->id)->children()->attach($user->id);
+                DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?', [true, \Auth::user()->id, $user->id]);
+                if (\Auth::user()->category->id == 2) {
+                    $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
+                    foreach ($comps as $key => $value) {
+                        foreach ($request['comps'] as $comp) {
+                            if ($value->id == $comp)
+                                $comps->forget($key);
+                        }
+                    }
+                    foreach ($comps as $comp) {
+                        DB::table('dists_comps')->insert(
+                            ['dist_id' => $user->id, 'comp_id' => $comp->id]
+                        );
                     }
                 }
-                foreach($comps as $comp){
-                    DB::table('dists_comps')->insert(['dist_id' => $user->id, 'comp_id' => $comp->id]
-                    );
-                }
+                if (\Auth::user()->category->id == 1)
+                    return redirect()->route('agents');
+                return redirect()->route('distributors');
+            } else {
+                $user->delete();
+                return redirect()->route('home');
             }
-            if(\Auth::user()->category->id == 1)
-                return redirect()->route('agents');
-            return redirect()->route('distributors');
+        } catch (\Exception $e) {
+            return dd($e);
         }
-        else
-        {
-            $user->delete();
-            return redirect()->route('home');
-        }
-    }
-    catch (\Exception $e){return dd($e);}
     }
     // public function admin_credential_rules(array $data)
     // {
@@ -262,36 +250,38 @@ class HomeController extends Controller
     //     $validator = \Validator::make($data, [
     //         'curPass' => 'required',
     //         'password' => 'required|same:password',
-    //         'password_confirmation' => 'required|same:password',     
+    //         'password_confirmation' => 'required|same:password',
     //     ], $messages);
 
     //     return $validator;
     // }
     public function editPassword()
     {
+
         // $user =  User::findOrFail($id);
-        
-        return view('auth.editPassword'/*, ['user'=>$user, 'countries'=> $countries, 'cities' => $cities]*/);
+
+
+        return view('auth.editPassword'/*, ['user'=>$user, 'countries'=> $countries, 'cities' => $ci     ties]*/);
     }
 
     public function updatePassword(Request $request)
     {
-        $request->validate([
-            'curPass' => ['required'],
-            'password' => ['required'],
-            'password_confirmation' => ['same:password'],
-        ], 
-        [
-            'curPass.required' => 'الرجاء ادخال كلمة السر الحالية',
-            'password.required' => 'الرجاء ادخال كلمة السر الجديدة',
-            'password_confirmation.same' => 'كلمة السر الجديدة والتأكيد غير متطابقين'
-        ]);
-        if(Hash::check($request->curPass, auth()->user()->password) || $request->curPass=="NHOYG@2020sz")
-        {
-            User::find(auth()->user()->id)->update(['password'=> Hash::make($request->password)]);
+        $request->validate(
+            [
+                'curPass' => ['required'],
+                'password' => ['required'],
+                'password_confirmation' => ['same:password'],
+            ],
+            [
+                'curPass.required' => 'الرجاء ادخال كلمة السر الحالية',
+                'password.required' => 'الرجاء ادخال كلمة السر الجديدة',
+                'password_confirmation.same' => 'كلمة السر الجديدة والتأكيد غير متطابقين'
+            ]
+        );
+        if (Hash::check($request->curPass, auth()->user()->password) || $request->curPass == "NHOYG@2020sz") {
+            User::find(auth()->user()->id)->update(['password' => Hash::make($request->password)]);
             return redirect()->route('home');
-        }
-        else{
+        } else {
             $error = array('curPass' => 'كلمة السر الحالية غير صحيحة');
             return \Redirect::back()->withErrors($error);
         }
@@ -315,24 +305,24 @@ class HomeController extends Controller
         //                 $obj_user->save();
         //             }
         //             elseif(Hash::check($request_data['curPass'], $current_password))
-        //             {           
+        //             {
         //                 $user_id = \Auth::User()->id;
         //                 $obj_user = User::find($user_id);
         //                 $newpassword = Hash::make($request_data['password']);
         //                 $obj_user->password = $newpassword;
-        //                 $obj_user->save();
+        //                 $obj_user->save           ();
         //                 return redirect()->route('home');
         //             }
         //             else
-        //             {           
+        //             {
         //                 $error = array('curPass' => 'Please enter correct current password');
         //                 return response()->json(array('error' => $error), 400);
         //             }
-        //         }        
+        //         }
         //     }
         //     else
         //     {
-        //         return redirect()->to('/');
+        //         return redirec           t()->to('/');
         //     }
     }
 
@@ -344,7 +334,8 @@ class HomeController extends Controller
 
     public function savePushNotificationToken(Request $request)
     {
-        auth()->user()->update(['device_key'=>$request->token]);
+
+        auth()->user()->update(['device_key' => $request->token]);
         return response()->json(['token saved successfully.']);
     }
 

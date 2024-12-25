@@ -16,8 +16,9 @@ class DropUniqueUserRelationsTable extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::table('user_relations', function (Blueprint $table) {
             //
+            $table->dropForeign('user_relations_child_id_foreign');
             $table->dropUnique('user_relations_child_id_parent_id_unique');
-            $table->unique(['child_id','parent_id','comp_id']);
+            $table->unique(['child_id', 'parent_id', 'comp_id']);
         });
         Schema::enableForeignKeyConstraints();
     }

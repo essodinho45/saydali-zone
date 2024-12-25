@@ -20,14 +20,14 @@ class CreateUserCategoriesTable extends Migration
         });
         DB::table('user_categories')->insert(
             array(
-            ['name' => 'Company'],
-            ['name' => 'Agent'],
-            ['name' => 'Distributor'],
-            ['name' => 'Free Distributor'],
-            ['name' => 'Pharmacist'],
+                ['name' => 'Company'],
+                ['name' => 'Agent'],
+                ['name' => 'Distributor'],
+                ['name' => 'Free Distributor'],
+                ['name' => 'Pharmacist'],
+                ['name' => 'Administrator'],
             )
-    );
-    DB::table('user_categories')->insert(['id' => 0, 'name' => 'Administrator']);
+        );
     }
 
     /**

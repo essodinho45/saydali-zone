@@ -16,22 +16,17 @@ class OffersController extends Controller
      */
     public function index()
     {
-        if(\Auth::user()->user_category_id == 2 || \Auth::user()->user_category_id == 3)
-        {
-            $offers = Offer::where('user_id',\Auth::user()->id)->get();
-            $baskets = Basket::where('user_id',\Auth::user()->id)->get();
-        }
-        else if(\Auth::user()->user_category_id == 5 || \Auth::user()->user_category_id == 0)
-        {
+        if (\Auth::user()->user_category_id == 2 || \Auth::user()->user_category_id == 3) {
+            $offers = Offer::where('user_id', \Auth::user()->id)->get();
+            $baskets = Basket::where('user_id', \Auth::user()->id)->get();
+        } else if (\Auth::user()->user_category_id == 5 || \Auth::user()->user_category_id == 6) {
             $offers = Offer::all();
             $baskets = Basket::all();
-        }
-        else
-        {
+        } else {
             $offers = Offer::whereIn('user_id', \Auth::user()->parents->pluck('id'))->get();
             $baskets = Basket::whereIn('user_id', \Auth::user()->parents->pluck('id'))->get();
         }
-            return view('offers.index', ['offers'=>$offers, "baskets"=>$baskets]);
+        return view('offers.index', ['offers' => $offers, "baskets" => $baskets]);
     }
 
     /**
@@ -41,13 +36,13 @@ class OffersController extends Controller
      */
     public function create()
     {
-        if(\Auth::user()->category->id == 2)
+        if (\Auth::user()->category->id == 2)
             $items = Item::whereIn('user_id', \Auth::user()->parents->pluck('id'))->get();
-        elseif(\Auth::user()->category->id == 3)
+        elseif (\Auth::user()->category->id == 3)
             $items = Item::whereIn('user_id', \Auth::user()->parents->parents->pluck('id'))->get();
-        elseif(\Auth::user()->category->id == 0)
+        elseif (\Auth::user()->category->id == 6)
             $items = Item::all();
-        return view('offers.create', ['items'=>$items]);
+        return view('offers.create', ['items' => $items]);
     }
 
     /**
@@ -58,27 +53,26 @@ class OffersController extends Controller
      */
     public function store(Request $request)
     {
-        if($request->offer_type == 3)
-            {
-                $offer = new Basket();
-                $offer->user_id = \Auth::user()->id;
-                $offer->remark = $request->remark;
-                $offer->name = $request->name;
-                $offer->price = $request->price;
-                $offer->from_date = $request->from_date;
-                $offer->to_date = $request->to_date;
-                try{$offer->save();}
-                catch(\Exception $e){dd($e);}
-                $basket_items = explode( ',', $request->basket_info );
-                foreach($basket_items as $item)
-                {
-                    $item = explode( '-', $item );
-                    $offer->items()->attach((int)$item[0],  ['quantity' => (int)$item[1]]);
-                }
+        if ($request->offer_type == 3) {
+            $offer = new Basket();
+            $offer->user_id = \Auth::user()->id;
+            $offer->remark = $request->remark;
+            $offer->name = $request->name;
+            $offer->price = $request->price;
+            $offer->from_date = $request->from_date;
+            $offer->to_date = $request->to_date;
+            try {
+                $offer->save();
+            } catch (\Exception $e) {
+                dd($e);
             }
-        else
-            {
-                try{
+            $basket_items = explode(',', $request->basket_info);
+            foreach ($basket_items as $item) {
+                $item = explode('-', $item);
+                $offer->items()->attach((int) $item[0], ['quantity' => (int) $item[1]]);
+            }
+        } else {
+            try {
                 $offer = new Offer();
                 $offer->user_id = \Auth::user()->id;
                 $offer->item_id = $request->item_id;
@@ -89,10 +83,12 @@ class OffersController extends Controller
                 $offer->free_quant = $request->free_quant ?? 0;
                 $offer->quant = $request->quant ?? 0;
                 $offer->free_item = $request->free_item;
-                $offer->save();}
-                catch(\Exception $e){dd($e);}
+                $offer->save();
+            } catch (\Exception $e) {
+                dd($e);
             }
-            return redirect('/offers');
+        }
+        return redirect('/offers');
     }
 
     /**
@@ -137,19 +133,18 @@ class OffersController extends Controller
      */
     public function destroy($type, $id)
     {
-        if((int)$type == 1)
-        {
-            try{
-            Offer::findOrFail((int)$id)->delete();}
-            catch(\Exception $e){dd($e);}
-        }
-        else 
-        if((int)$type == 2)
-        {
-            Basket::findOrFail((int)$id)->items()->detach(); 
-            Basket::findOrFail((int)$id)->orders()->detach(); 
-            Basket::findOrFail((int)$id)->delete(); 
-        }
+        if ((int) $type == 1) {
+            try {
+                Offer::findOrFail((int) $id)->delete();
+            } catch (\Exception $e) {
+                dd($e);
+            }
+        } else
+            if ((int) $type == 2) {
+                Basket::findOrFail((int) $id)->items()->detach();
+                Basket::findOrFail((int) $id)->orders()->detach();
+                Basket::findOrFail((int) $id)->delete();
+            }
         return redirect('/offers');
     }
 }

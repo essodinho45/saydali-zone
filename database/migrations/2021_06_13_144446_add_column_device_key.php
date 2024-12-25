@@ -14,6 +14,7 @@ class AddColumnDeviceKey extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
+            $table->string('api_token')->nullable()->default(null);
             $table->string('device_key')->nullable()->default(null);
         });
     }
@@ -25,6 +26,7 @@ class AddColumnDeviceKey extends Migration
      */
     public function down()
     {
+        $table->dropColumn('api_token');
         $table->dropColumn('device_key');
     }
 }

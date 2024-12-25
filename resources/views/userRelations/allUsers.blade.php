@@ -38,7 +38,7 @@
                         @if($user->email_verified_at == null)
                             <a class="btn btn-info btn-sm" id="verBtn{{$user->id}}" href="#" onclick="verUsrAjax({{$user->id}})">{{__('Verify')}}</a>
                         @endif
-                        @if($user->user_category_id != 0)
+                        @if($user->user_category_id != 6)
                             <a class="btn btn-secondary btn-sm" href="/showUsr/{{$user->id}}">{{__('Show')}}</a>
                             @if($user->freezed == false)
                                 <a class="btn btn-danger btn-sm" id="frzUsrBtn{{$user->id}}" href="#" onclick="frzUsrAjax({{$user->id}})">{{__('Freeze')}}</a>
@@ -65,7 +65,7 @@
                         @endif
                     </td>
                 </tr>
-            @endforeach        
+            @endforeach
             </tbody>
         </table>
     </div>
@@ -92,7 +92,7 @@
                 if (!(typeof attr !== typeof undefined && attr !== false) && !$(this).hasClass('d-none')) {
                     $(this).addClass('d-none d-lg-table-cell');
                 }
-        
+
                 $( 'input', this ).on( 'keyup change', function () {
                     if ( table.column(i).search() !== this.value ) {
                         table
