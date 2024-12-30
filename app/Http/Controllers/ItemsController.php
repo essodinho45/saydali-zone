@@ -109,8 +109,8 @@ class ItemsController extends Controller
         $item->descr1 = request('descr1');
         $item->descr2 = request('descr2');
         $item->price = request('price');
-        $item->customer_price = request('customer_price');
-        $item->titer = request('titer');
+        $item->customer_price = request('customer_price') ?? 0;
+        $item->titer = request('titer') ?? 0;
         $item->properties = request('properties');
         $item->package = request('package');
         $item->storage = request('storage');
@@ -184,8 +184,8 @@ class ItemsController extends Controller
         $item->descr1 = request('descr1');
         $item->descr2 = request('descr2');
         $item->price = request('price');
-        $item->customer_price = request('customer_price');
-        $item->titer = request('titer');
+        $item->customer_price = request('customer_price') ?? 0;
+        $item->titer = request('titer') ?? 0;
         $item->properties = request('properties');
         $item->package = request('package');
         $item->storage = request('storage');
