@@ -79,6 +79,7 @@
     $(document).ready(function() {
         $('#OrdersTable').DataTable({
             fixedHeader: true,
+            order: [[2, 'desc'], [3, 'desc']],
             "info": false,
             "oLanguage": {
                 "sSearch": "<i class='fas fa-search'></i>"
