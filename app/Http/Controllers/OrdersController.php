@@ -25,12 +25,13 @@ class OrdersController extends Controller
     {
         try {
             if (in_array(\Auth::user()->user_category_id, [2, 3, 4])) {
-                $orders = Order::where('reciever_id', \Auth::user()->id)->get();
+                $orders = Order::where('reciever_id', \Auth::user()->id);
                 Cookie::queue('last-seen-orders', $orders->last()->id);
             } else if (\Auth::user()->user_category_id == 5)
-                $orders = Order::where('sender_id', \Auth::user()->id)->get();
+                $orders = Order::where('sender_id', \Auth::user()->id);
             else if (\Auth::user()->user_category_id == 6)
-                $orders = Order::all();
+                $orders = Order::query();
+            $orders = $orders->orderByDesc('created_at')->get();
             return view('orders.index', ['orders' => $orders]);
         } catch (\Exception $e) {
             dd($e);
