@@ -167,7 +167,7 @@ class OrdersController extends Controller
     }
     public function addAllItemsToCart(Request $request)
     {
-        dd($request->objects);
+        // dd($request->objects);
         try {
             $objects = json_decode($request->objects, true);
             // dd($objects);
