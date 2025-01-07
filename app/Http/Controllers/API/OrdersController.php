@@ -172,16 +172,15 @@ class OrdersController extends Controller
             $objects = json_decode($request->objects, true);
             // dd($objects);
             foreach ($objects as $obj) {
-                $obj = json_decode($obj);
                 $freeQuant = 0;
-                $cart = Cart::where(['sender_id' => \Auth::user()->id, 'reciever_id' => $obj->reciever, 'item_id' => $obj->id, 'is_basket' => false])->get();
+                $cart = Cart::where(['sender_id' => \Auth::user()->id, 'reciever_id' => $obj['reciever'], 'item_id' => $obj['id'], 'is_basket' => false])->get();
                 if ($cart->count() == 0) {
                     $cart = new Cart([
                         'sender_id' => \Auth::user()->id,
-                        'reciever_id' => $obj->reciever,
-                        'item_id' => $obj->id,
-                        'remark' => $obj->sender_remark,
-                        'quantity' => $obj->quant,
+                        'reciever_id' => $obj['reciever'],
+                        'item_id' => $obj['id'],
+                        'remark' => $obj['sender_remark'],
+                        'quantity' => $obj['quant'],
                         'is_basket' => false
                     ]);
                     // if($request->isBasket == "true")
@@ -190,28 +189,28 @@ class OrdersController extends Controller
                     //     }
                     // else
                     //     {
-                    $item = Item::findOrFail($obj->id);
-                    $currentOffers = $item->offers->where('to_date', '>=', now())->where('user_id', $obj->reciever);
-                    if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $obj->quant >= $currentOffers->where('discount', '>', 0)->first->quantity) {
+                    $item = Item::findOrFail($obj['id']);
+                    $currentOffers = $item->offers->where('to_date', '>=', now())->where('user_id', $obj['reciever']);
+                    if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $obj['quant'] >= $currentOffers->where('discount', '>', 0)->first->quantity) {
                         $item->price -= (float) $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
                     }
-                    if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $obj->quant >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $obj->id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
-                        $freeQuant = (int) (($obj->quant / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
+                    if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $obj['quant'] >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $obj['id'] >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
+                        $freeQuant = (int) (($obj['quant'] / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
                     }
-                    $price = (float) ($obj->quant * $item->price);
+                    $price = (float) ($obj['quant'] * $item->price);
                     // }
                     $cart->price = $price;
                     $cart->free_quant = $freeQuant;
                     $cart->is_basket = false;
                 } else {
                     $cart = $cart->first();
-                    $quantity = $cart->quantity + $obj->quant;
-                    $item = Item::findOrFail($obj->id);
-                    $currentOffers = $item->offers->where('to_date', '>=', now())->where('user_id', $obj->reciever);
+                    $quantity = $cart->quantity + $obj['quant'];
+                    $item = Item::findOrFail($obj['id']);
+                    $currentOffers = $item->offers->where('to_date', '>=', now())->where('user_id', $obj['reciever']);
                     if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
                         $item->price -= $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
                     }
-                    if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $obj->id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
+                    if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $obj['id'] >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
                         $freeQuant = (int) (($quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
                     }
                     $price = $quantity * $item->price;
