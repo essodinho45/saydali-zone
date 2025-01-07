@@ -15,6 +15,7 @@ class AddSenderRemarkToOrderItemTable extends Migration
     {
         Schema::table('order_item', function (Blueprint $table) {
             $table->string('sender_remark')->nullable()->default(null);
+            $table->string('reciever_remark')->nullable()->default(null);
         });
     }
 
@@ -26,7 +27,12 @@ class AddSenderRemarkToOrderItemTable extends Migration
     public function down()
     {
         Schema::table('order_item', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('order_item', 'reciever_remark')) {
+                $table->dropColumn('reciever_remark');
+            }
+            if (Schema::hasColumn('order_item', 'sender_remark')) {
+                $table->dropColumn('sender_remark');
+            }
         });
     }
 }
