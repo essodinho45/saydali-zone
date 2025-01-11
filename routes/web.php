@@ -174,6 +174,8 @@ Route::middleware('verified')->group(function () {
     Route::post('reports/updateOrders', 'ReportsController@updateOrdersReport')->name('updateOrdersReport');
 
     Route::get('/showUsr/{id}', 'UserRelationsController@showUsr')->name('showUsr');
+    Route::get('/setDistCompanies/{id}', 'UserRelationsController@setDistCompanies')->name('setDistCompanies');
+    Route::post('/addCompsToDist/{id}', 'UserRelationsController@addCompsToDist')->name('addCompsToDist');
 
 });
 

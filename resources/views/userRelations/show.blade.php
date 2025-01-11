@@ -54,8 +54,7 @@
                                     <h4>{{ __('Companies') }}</h4>
                                     <ul>
                                         @foreach ($user->parents as $parent)
-                                            <li><a
-                                                    href="{{ route('showUsr', [$parent->id]) }}">{{ $parent->f_name }}</a>
+                                            <li><a href="{{ route('showUsr', [$parent->id]) }}">{{ $parent->f_name }}</a>
                                             </li>
                                         @endforeach
                                     </ul>
@@ -184,6 +183,8 @@
                                                 <a class="btn btn-secondary btn-disabled disabled float-right mx-1"
                                                     href="#">{{ __('Verified') }}</a>
                                             @endif
+                                            <a class="btn btn-secondary float-right mx-1" id="compsBtn{{ $user->id }}"
+                                                href="/setDistCompanies/{{ $user->id }}">{{ __('Companies') }}</a>
                                             @if (!$user->parents->where('id', Auth::user()->id)->first()->pivot->freezed)
                                                 <a class="btn btn-danger float-right mx-1" id="freezeBtn{{ $user->id }}"
                                                     href="#"

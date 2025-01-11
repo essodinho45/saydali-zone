@@ -265,7 +265,8 @@
                                             aria-labelledby="nav-lang2-tab">
                                             <div class="form-group row">
                                                 <label class="col-md-3 text-right" for="name_en">{{ __('Name') }}
-                                                    ({{ __('Second Language') }})</label>
+                                                    ({{ __('Second Language') }})
+                                                </label>
                                                 <div class="col-md-6">
                                                     <input id="name_en" type="text"
                                                         class="form-control @error('name_en') is-invalid @enderror"

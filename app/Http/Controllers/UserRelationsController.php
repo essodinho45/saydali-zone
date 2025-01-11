@@ -130,6 +130,47 @@ class UserRelationsController extends Controller
             return view('userRelations.show', ['dists'=>$dists, 'user'=>$parent]);}
         catch(\Exception $e){dd($e);}
     }
+
+    public function setDistCompanies(Request $request)
+    {
+        $dist = User::findOrFail(request()->id);
+        $non_allowed_ids = DB::table('dists_comps')->select('comp_id')->where('dist_id', request()->id)->get();
+        $comps = \Auth::user()->parents->where('user_category_id', '=', 1);
+        if($non_allowed_ids->count()>0){
+        foreach($comps as &$comp)
+            {
+                $comp['allowed'] = true;
+                foreach($non_allowed_ids as $non_allowed)
+                {
+                    if($comp->id == $non_allowed->comp_id)
+                        $comp['allowed'] = false;
+                }
+            }
+        }
+        // dd($comps, $non_allowed_ids);
+        return view('userRelations.distCompanies', ['dist'=>$dist, 'comps'=>$comps]);
+    }
+
+    public function addCompsToDist(Request $request)
+    {
+        DB::table('dists_comps')->where('dist_id', request()->id)->delete();
+        if($request['comps'] != null){
+        $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
+        foreach($comps as $key => $value){
+            foreach($request['comps'] as $comp)
+            {
+                if($value->id == $comp)
+                    $comps->forget($key);
+            }
+        }
+        foreach($comps as $comp){
+            DB::table('dists_comps')->insert(['dist_id' => request()->id, 'comp_id' => $comp->id]
+            );
+        }
+    }
+        return \redirect()->route('distributors');
+    }
+
     public function saveDist(Request $request)
     {
         try{

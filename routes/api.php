@@ -21,7 +21,8 @@ Route::get('countries', 'API\ApiController@getCountries');
 Route::middleware('auth:api')->group(function(){
     Route::get('getItems', 'API\ItemsController@getItems');
     Route::get('getBaskets', 'API\ItemsController@getBaskets');
-    Route::post('getAgents', 'API\ItemsController@getAgents');
+    Route::get('getAgents/{id}/{is_basket}', 'API\ItemsController@getAgents');
+    Route::get('itemsByAgent/{agent_id}', 'API\ItemsController@itemsByAgent');
     Route::post('addToCart', 'API\OrdersController@addAllItemsToCart');
     Route::post('addItemToCart', 'API\OrdersController@addToCart');
     Route::post('makeOrder', 'API\OrdersController@makeOrder');

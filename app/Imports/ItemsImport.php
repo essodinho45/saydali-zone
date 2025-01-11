@@ -17,12 +17,14 @@ class ItemsImport implements ToModel
      */
     public function model(array $row)
     {
-        try {
-
-            if (\Auth::user()->category->id == 1)
-                $usr = \Auth::user()->id;
-            elseif (\Auth::user()->category->id == 6)
-                $usr = User::where(['f_name' => $row[22], 'user_category_id' => 1])->first()->id;
+    try{
+        // dd($row[1]);
+        if(Item::where('barcode','=',$row[1])->count() > 0)
+            return;
+        if(\Auth::user()->category->id == 1) 
+            $usr = \Auth::user()->id;
+        elseif(\Auth::user()->category->id == 6)
+            $usr = User::where(['f_name'=>$row[22], 'user_category_id'=>1])->first()->id;        
 
             if ($row[9] == null)
                 $type = null;

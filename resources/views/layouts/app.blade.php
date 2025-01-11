@@ -90,8 +90,10 @@
                                     </a>
 
                                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown2">
-                                        <a class="dropdown-item"
-                                            href="{{ route('ordersReport') }}">{{ __('Orders Report') }}</a>
+                                        @if (Auth::user()->user_category_id != 1)
+                                            <a class="dropdown-item"
+                                                href="{{ route('ordersReport') }}">{{ __('Orders Report') }}</a>
+                                        @endif
                                     </div>
                                 </li>
                             @endif

@@ -21,6 +21,17 @@ class ReportsController extends Controller
             $agents = \Auth::user()->children;
         } elseif (\Auth::user()->category->id == 3 || \Auth::user()->category()->id == 4)
             $orders = Order::where('reciever_id', \Auth::user()->id)->get();
+        elseif (\Auth::user()->category->id == 1) {
+            $agents = \Auth::user()->children;
+            foreach($agents as $agent)
+            {
+                foreach($agent->children as $child)
+                {
+                    if( User::where('id','=', $child->id)->count() == 0)
+                        $agents->push($child);
+                }
+            }
+        }
 
         return view('reports.orders', ['orders' => $orders, 'agents' => $agents]);
     }

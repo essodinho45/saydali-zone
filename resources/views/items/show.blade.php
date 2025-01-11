@@ -10,6 +10,15 @@
                     {{ $item->titer }}&nbsp;{{ __('mg') }}
                 @endif
         </small>
+        @if (Auth::user()->user_category_id == 2 || Auth::user()->id == 3 || Auth::user()->id == 4)
+            <hr>
+            <div class="row">
+                <label for="quantity" class="col-2 offset-3">{{ __('Max Quantity') }}:</label>
+                <input type="number" class="form-control form-control-sm col-2" id="max_quantity" name="max_quantity"
+                    min="0">
+                <a class="btn btn-sm btn-secondary col-1 offset-1" href="#">{{ __('Save') }}</a>
+            </div>
+        @endif
         <hr>
         <div class="p-2">
             <div>

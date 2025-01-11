@@ -56814,7 +56814,13 @@ function freezeRelAjax(id, freezed) {
         url: '/userRelations/freeze',
         data: { id: id, freezed: freezed },
         success: function(data) {
-            $('#freezeBtn' + id).addClass('disabled');
+            if (freezed) {
+                $('#freezeBtn' + id).addClass('d-none');
+                $('#unfreezeBtn' + id).removeClass('d-none');
+            } else {
+                $('#freezeBtn' + id).removeClass('d-none');
+                $('#unfreezeBtn' + id).addClass('d-none');
+            }
             console.log(data);
         },
         error: function(error) {

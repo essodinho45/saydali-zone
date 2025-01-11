@@ -34,13 +34,46 @@ class ItemsController extends Controller
         }
     }
 
-    public function getAgents(Request $request)
+    public function itemsByAgent($agent_id)
+    {
+        // $agents = User::whereIn('user_category_id',[2,3])->get();
+        if($agent_id == 0)
+            {
+                $items = Item::all();
+                $baskets = Basket::all();
+            }
+        else
+            {
+                $agent = User::find($agent_id);
+                if($agent->category->name == "Agent")
+                    $ids_array = $agent->parents->pluck('id')->toArray();
+                elseif($agent->category->name == "Distributor")
+                {
+                    $parents = $agent->parents()->where('user_category_id',2)->wherePivot('verified', '=', true)->wherePivot('freezed', '=', false)->get();
+                    $ids_array = [];
+                    foreach($parents as $p)
+                    {
+                        foreach($p->parents->pluck('id')->toArray() as $pid)
+                            array_push($ids_array, $pid);
+                    }
+                }
+                array_push($ids_array, (int)$agent_id);
+                // $non_allowed_ids = DB::table('dists_comps')->select('comp_id')->where('dist_id', $agent_id)->get();
+                $items = Item::whereIn('user_id', $ids_array)->get();
+                $baskets = Basket::whereIn('user_id', $ids_array)->get();
+            }
+            return [$items, $baskets];        
+    }
+
+    public function getAgents($id, $is_basket)
     {
         try{
-            if($request->isBasket == "true")
-                return  Basket::findOrFail($request->id)->user;
+            if($is_basket != '0' && $is_basket != 'false')
+                return  Basket::findOrFail($id)->user;
             else{
-                $item =  Item::findOrFail($request->id);
+                if($id == '0' || $id == 0)
+                    return User::whereIn('user_category_id',[2,3,4])->get();
+                $item =  Item::findOrFail($id);
 
                 $allAgents = $item->company->children->filter(function($value, $key) {
                 if (($value['user_category_id'] == 2 || $value['user_category_id'] == 4) && $value['city'] == \Auth::user()->city) {return true;}
