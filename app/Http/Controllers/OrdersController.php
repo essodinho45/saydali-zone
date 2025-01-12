@@ -26,7 +26,7 @@ class OrdersController extends Controller
         try {
             if (in_array(\Auth::user()->user_category_id, [2, 3, 4])) {
                 $orders = Order::where('reciever_id', \Auth::user()->id);
-                Cookie::queue('last-seen-orders', $orders->last()->id);
+                Cookie::queue('last-seen-orders', $orders->orderByDesc('created_at')->first()->id ?? null);
             } else if (\Auth::user()->user_category_id == 5)
                 $orders = Order::where('sender_id', \Auth::user()->id);
             else if (\Auth::user()->user_category_id == 6)
