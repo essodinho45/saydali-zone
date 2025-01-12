@@ -26,13 +26,14 @@ class OrdersController extends Controller
         try {
             if (in_array(\Auth::user()->user_category_id, [2, 3, 4])) {
                 $orders = Order::where('reciever_id', \Auth::user()->id);
-                Cookie::queue('last-seen-orders', $orders->orderByDesc('created_at')->first()->id ?? null);
+                $last_order_id = clone $orders;
+                $last_order_id = $last_order_id->orderByDesc('created_at')->first()->id ?? null;
+                Cookie::queue('last-seen-orders', $last_order_id);
             } else if (\Auth::user()->user_category_id == 5)
                 $orders = Order::where('sender_id', \Auth::user()->id);
             else if (\Auth::user()->user_category_id == 6)
                 $orders = Order::query();
             $orders = $orders->orderByDesc('created_at')->get();
-            dd($orders);
             return view('orders.index', ['orders' => $orders]);
         } catch (\Exception $e) {
             dd($e);
