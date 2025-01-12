@@ -32,6 +32,7 @@ class OrdersController extends Controller
             else if (\Auth::user()->user_category_id == 6)
                 $orders = Order::query();
             $orders = $orders->orderByDesc('created_at')->get();
+            dd($orders);
             return view('orders.index', ['orders' => $orders]);
         } catch (\Exception $e) {
             dd($e);
