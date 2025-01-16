@@ -39,12 +39,12 @@ class ReportsController extends Controller
 
     public function updateOrdersReport(Request $request)
     {
+        dd($request->all());
         if ($request->from_date == null)
             $request->from_date = new \DateTime('1900-01-01T00:00:00');
         if ($request->to_date == null)
             $request->to_date = now();
 
-        dd($request->all());
         // dd($request->from_date, $request->to_date);
 
         if (\Auth::user()->category->id == 6) {
