@@ -69,7 +69,7 @@ class ReportsController extends Controller
                 ->whereDate('created_at', '>=', $from_date)
                 ->whereDate('created_at', '<=', $to_date);
             $agents = \Auth::user()->children;
-            dd($orders->toSql(), $orders->getBindings());
+            dd($agents);
         }
         return view('reports.orders', ['orders' => $orders, 'agents' => $agents]);
     }
