@@ -39,7 +39,7 @@ class ReportsController extends Controller
 
     public function updateOrdersReport(Request $request)
     {
-        dd($request->all());
+        dd($request->all(), $request->agent);
         if ($request->from_date == null)
             $request->from_date = new \DateTime('1900-01-01T00:00:00');
         if ($request->to_date == null)
