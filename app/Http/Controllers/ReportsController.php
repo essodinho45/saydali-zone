@@ -44,6 +44,7 @@ class ReportsController extends Controller
         if ($request->to_date == null)
             $request->to_date = now();
 
+        dd($request->all());
         // dd($request->from_date, $request->to_date);
 
         if (\Auth::user()->category->id == 6) {
@@ -71,7 +72,6 @@ class ReportsController extends Controller
                 ->whereDate('created_at', '>=', $request->from_date)
                 ->whereDate('created_at', '<=', $request->to_date)
                 ->get();
-
             $agents = \Auth::user()->children;
         }
 
