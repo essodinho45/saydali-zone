@@ -25,7 +25,8 @@
                                                 value="{{ old('agent') }}">
                                                 <option value="0">الكل</option>
                                                 @foreach ($agents as $agent)
-                                                    <option value="{{ $agent->id }}">
+                                                    <option value="{{ $agent->id }}"
+                                                        @if (old('agent') == $agent->id) selected @endif>
                                                         {{ $agent->f_name }}&nbsp;{{ $agent->s_name }}</option>
                                                 @endforeach
                                             </select>
