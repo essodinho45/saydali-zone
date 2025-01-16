@@ -72,6 +72,6 @@ class ReportsController extends Controller
             $agents = \Auth::user()->children;
             $agents->push(\Auth::user());
         }
-        return view('reports.orders', ['orders' => $orders, 'agents' => $agents]);
+        return view('reports.orders', ['orders' => $orders, 'agents' => $agents, 'selected_agent' => $request->agent]);
     }
 }
