@@ -71,7 +71,7 @@ class ReportsController extends Controller
                 ->get();
             $agents = \Auth::user()->children;
         }
-
+        dd($orders);
         return view('reports.orders', ['orders' => $orders, 'agents' => $agents]);
     }
 }
