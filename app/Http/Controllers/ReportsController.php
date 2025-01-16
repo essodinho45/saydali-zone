@@ -68,7 +68,7 @@ class ReportsController extends Controller
             $orders = Order::where('reciever_id', $request->agent)
                 ->whereDate('created_at', '>=', $from_date)
                 ->whereDate('created_at', '<=', $to_date)
-                ->get();
+                ->toSql();
             $agents = \Auth::user()->children;
         }
         dd($orders, \Auth::user()->category->id);
