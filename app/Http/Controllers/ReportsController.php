@@ -46,28 +46,29 @@ class ReportsController extends Controller
 
         if (\Auth::user()->category->id == 6) {
             $agents = null;
-            if (User::findOrFail($request->agent)->category->id != 2)
-                $orders = Order::where('reciever_id', $request->agent)
-                    ->whereDate('created_at', '>=', $from_date)
-                    ->whereDate('created_at', '<=', $to_date)
-                    ->get();
-            else {
-                $recievers = User::findOrFail($request->agent)->children->pluck('id')->toArray();
-                array_push($recievers, $request->agent);
-                $orders = Order::whereIn('reciever_id', $recievers)
-                    ->whereDate('created_at', '>=', $from_date)
-                    ->whereDate('created_at', '<=', $to_date)
-                    ->get();
+            $orders = Order::whereDate('created_at', '>=', $from_date)
+                ->whereDate('created_at', '<=', $to_date);
+            if ($request->agent > 0) {
+                if (User::findOrFail($request->agent)->category->id != 2)
+                    $orders = $orders->where('reciever_id', $request->agent);
+                else {
+                    $recievers = User::findOrFail($request->agent)->children->pluck('id')->toArray();
+                    array_push($recievers, $request->agent);
+                    $orders = Order::whereIn('reciever_id', $recievers);
+                }
             }
+            $orders = $orders->get();
             $agents = User::whereIn('user_category_id', [2, 3, 4])->get();
         } elseif (\Auth::user()->category->id == 3 || \Auth::user()->category->id == 4)
             $orders = Order::where('reciever_id', \Auth::user()->id)
                 ->whereDate('created_at', '>=', $from_date)
                 ->whereDate('created_at', '<=', $to_date)->get();
         elseif (\Auth::user()->category->id == 2) {
-            $orders = Order::where('reciever_id', $request->agent)
-                ->whereDate('created_at', '>=', $from_date)
-                ->whereDate('created_at', '<=', $to_date)->get();
+            $orders = Order::whereDate('created_at', '>=', $from_date)
+                ->whereDate('created_at', '<=', $to_date);
+            if ($request->agent > 0)
+                $orders = $orders->where('reciever_id', $request->agent);
+            $orders = $orders->get();
             $agents = \Auth::user()->children;
             $agents->push(\Auth::user());
         }

@@ -23,6 +23,7 @@
                                             <select class="form-control" id="agentFavAg"
                                                 class="form-control @error('agent') is-invalid @enderror" name="agent"
                                                 value="{{ old('agent') }}">
+                                                <option value="0">الكل</option>
                                                 @foreach ($agents as $agent)
                                                     <option value="{{ $agent->id }}">
                                                         {{ $agent->f_name }}&nbsp;{{ $agent->s_name }}</option>
@@ -143,7 +144,7 @@
                             .css('font-size', '10pt')
                             .attr('dir', 'rtl')
                             .append('<div style="margin-top: 20px;">' + $('#totalCount')
-                            .html() + '</div>');
+                                .html() + '</div>');
 
                         $(win.document.body).find('table')
                             .addClass('compact')
