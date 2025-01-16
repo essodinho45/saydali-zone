@@ -67,11 +67,10 @@ class ReportsController extends Controller
         elseif (\Auth::user()->category->id == 2) {
             $orders = Order::where('reciever_id', $request->agent)
                 ->whereDate('created_at', '>=', $from_date)
-                ->whereDate('created_at', '<=', $to_date)
-                ->ddRawSql();
+                ->whereDate('created_at', '<=', $to_date);
             $agents = \Auth::user()->children;
+            dd($orders->toSql(), $orders->getBindings());
         }
-        dd($orders, \Auth::user()->category->id);
         return view('reports.orders', ['orders' => $orders, 'agents' => $agents]);
     }
 }
