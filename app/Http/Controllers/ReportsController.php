@@ -70,7 +70,6 @@ class ReportsController extends Controller
                 ->whereDate('created_at', '<=', $to_date)->get();
             $agents = \Auth::user()->children;
             $agents->push(\Auth::user());
-            dd($agents);
         }
         return view('reports.orders', ['orders' => $orders, 'agents' => $agents]);
     }
