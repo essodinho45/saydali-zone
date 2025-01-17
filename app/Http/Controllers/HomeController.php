@@ -216,17 +216,19 @@ class HomeController extends Controller
                 User::findOrFail(\Auth::user()->id)->children()->attach($user->id);
                 DB::update('update user_relations set verified = ? where parent_id = ? and child_id = ?', [true, \Auth::user()->id, $user->id]);
                 if (\Auth::user()->category->id == 2) {
-                    $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
-                    foreach ($comps as $key => $value) {
+                    if ($request['comps']) {
                         foreach ($request['comps'] as $comp) {
-                            if ($value->id == $comp)
-                                $comps->forget($key);
+                            DB::table('dists_comps')->insert(
+                                ['dist_id' => $user->id, 'comp_id' => $comp]
+                            );
                         }
-                    }
-                    foreach ($comps as $comp) {
-                        DB::table('dists_comps')->insert(
-                            ['dist_id' => $user->id, 'comp_id' => $comp->id]
-                        );
+                    } else {
+                        $comps = \Auth::user()->parents()->where('user_category_id', 1)->get();
+                        foreach ($comps as $comp) {
+                            DB::table('dists_comps')->insert(
+                                ['dist_id' => $user->id, 'comp_id' => $comp->id]
+                            );
+                        }
                     }
                 }
                 if (\Auth::user()->category->id == 1)

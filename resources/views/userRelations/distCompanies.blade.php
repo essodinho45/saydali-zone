@@ -17,9 +17,10 @@
                                         <select class="form-control w-100" id="dist"
                                             class="form-control @error('dist') is-invalid @enderror" name="dist"
                                             value="{{ old('dist') }}" disabled required>
-                                                <option value="{{ $dist->id }}">{{ $dist->f_name }}&nbsp; @if ($dist->s_name){{ $dist->s_name }}
-                                                    @endif
-                                                </option>                                            
+                                            <option value="{{ $dist->id }}">{{ $dist->f_name }}&nbsp; @if ($dist->s_name)
+                                                    {{ $dist->s_name }}
+                                                @endif
+                                            </option>
                                         </select>
                                         @error('dist')
                                             <span class="invalid-feedback" role="alert">
@@ -35,7 +36,9 @@
                                             class="form-control @error('comps') is-invalid @enderror" name="comps"
                                             value="{{ old('comps') }}" multiple>
                                             @foreach ($comps as $comp)
-                                                <option value="{{ $comp->id }}" @if($comp->allowed) selected @endif >{{ $comp->f_name }} </option>
+                                                <option value="{{ $comp->id }}"
+                                                    @if (in_array($comp->id, $selected)) selected @endif>{{ $comp->f_name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                         @error('comps')
@@ -61,14 +64,14 @@
     </div>
 @endsection
 @section('scripts')
-<link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
-<script src="{{ asset('js/select2.min.js') }}"></script>
-<script>
-    // function pwtt(x)
-    // {
-    // }
-$(document).ready(function() {
-    $('select').select2();
-  });
-</script>
+    <link href="{{ asset('css/select2.min.css') }}" rel="stylesheet" />
+    <script src="{{ asset('js/select2.min.js') }}"></script>
+    <script>
+        // function pwtt(x)
+        // {
+        // }
+        $(document).ready(function() {
+            $('select').select2();
+        });
+    </script>
 @endsection
