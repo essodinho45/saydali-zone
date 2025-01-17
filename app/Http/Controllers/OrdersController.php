@@ -180,6 +180,7 @@ class OrdersController extends Controller
                 } else {
                     $item = Item::findOrFail($request->item_id);
                     $currentOffers = $item->offers->where('to_date', '>=', now())->whereIn('user_id', $offersAgents);
+                    dd($offersAgents, $currentOffers);
                     if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $request->quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
                         $item->price -= (float) $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
                     }
