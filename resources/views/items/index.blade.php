@@ -485,6 +485,7 @@
                         console.log("offers");
                         console.log("___________________________________");
                         console.log(data);
+                        console.log(data.length);
                         if (data.length > 0) {
                             if (data[0].discount > 0)
                                 var title = "" + data[0].discount + " %" + " | " + data[0].quant;
