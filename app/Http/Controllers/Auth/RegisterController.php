@@ -54,11 +54,11 @@ class RegisterController extends Controller
      */
     public function apiRegister(Request $request)
     {
-        try{
-        $this->validator($request->json()->all())->validate();
+        try {
+            $this->validator($request->json()->all())->validate();
+        } catch (\Exception $e) {
+            return $e->validator->errors();
         }
-        catch(\Exception $e)
-        {return $e->validator->errors();}
 
         event(new Registered($user = $this->create($request->json()->all())));
 
@@ -66,28 +66,30 @@ class RegisterController extends Controller
     }
     protected function validator(array $data)
     {
+        // dd($data);
         $val = Validator::make($data, [
             'f_name' => ['required', 'string', 'max:255'],
             'username' => ['required', 'string', 'max:255', 'unique:users'],
             's_name' => ['nullable', 'string', 'max:255'],
             'commercial_name' => ['nullable', 'string', 'max:255'],
-            'user_category_id' => [ 'string', 'required'],
+            'user_category_id' => ['string', 'required'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'email2' => ['nullable', 'string', 'email', 'max:255', 'unique:users'],
-            'licence_number'=>['nullable','string','required_if:user_category_id,5'],
+            'licence_number' => ['nullable', 'string', 'required_if:user_category_id,5'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'country' => ['required', 'string', 'max:3'],
-            'city' => [ 'nullable','string', 'max:255'],
-            'region' => [ 'nullable','string', 'max:255'],
-            'address' => [ 'nullable','string', 'max:255'],
-            'tel1' => [ 'nullable','string', 'max:255'],
-            'tel2' => [ 'nullable','string', 'max:255'],
-            'mob1' => [ 'required','string', 'max:255'],
-            'mob2' => [ 'nullable','string', 'max:255'],
-            'tel2' => [ 'nullable','string', 'max:255'],
-            'fax1' => [ 'nullable','string', 'max:255'],
-            'fax2' => [ 'nullable','string', 'max:255'],
-            'logo_image' => ['sometimes', 'image', 'mimes:jpg,jpeg,png,bmp,svg', 'max:5000']
+            'city' => ['nullable', 'string', 'max:255'],
+            'region' => ['nullable', 'string', 'max:255'],
+            'address' => ['nullable', 'string', 'max:255'],
+            'tel1' => ['nullable', 'string', 'max:255'],
+            'tel2' => ['nullable', 'string', 'max:255'],
+            'mob1' => ['required', 'string', 'max:255'],
+            'mob2' => ['nullable', 'string', 'max:255'],
+            'tel2' => ['nullable', 'string', 'max:255'],
+            'fax1' => ['nullable', 'string', 'max:255'],
+            'fax2' => ['nullable', 'string', 'max:255'],
+            'logo_image' => ['sometimes', 'image', 'mimes:jpg,jpeg,png,bmp,svg', 'max:5000'],
+            'captcha' => 'required|captcha',
         ]);
         return $val;
     }
@@ -100,24 +102,20 @@ class RegisterController extends Controller
      */
     protected function create(array $data)
     {
-        if(request()->has('logo_image'))
-        {
+        if (request()->has('logo_image')) {
             $uploadedImg = request()->file('logo_image');
             $fileName = time() . '.' . $uploadedImg->getClientOriginalExtension();
             $uploadPath = public_path('/images/logos/');
             $uploadedImg->move($uploadPath, $fileName);
-        }
-        else
-        {
+        } else {
             $fileName = 'default_logo.png';
         }
-        try{
+        try {
             $this->validator($data)->validate();
-        }
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             // dd($e->validator->errors());
             // return $e->validator->errors();
-            return back()->with('error',$e->validator->errors());
+            return back()->with('error', $e->validator->errors());
         }
 
         return User::create([
@@ -135,19 +133,19 @@ class RegisterController extends Controller
             'address' => $data['address'],
             'tel1' => $data['tel1'],
             'tel2' => $data['tel2'],
-            'mob1' => '963' . ltrim($data['mob1'], '0'),
+            'mob1' => $data['mob1'],
             'mob2' => $data['mob2'],
             'fax1' => $data['fax1'],
             'fax2' => $data['fax2'],
-            'logo_image' => '/images/logos/'.$fileName,
+            'logo_image' => '/images/logos/' . $fileName,
             'password' => Hash::make($data['password']),
             'api_token' => Str::random(60),
         ]);
     }
     public function showRegistrationForm()
     {
-        $countries=Country::all();
-        $cities=City::where('country', '1')->get();
-        return view('auth.register', ['countries'=>$countries, 'cities'=>$cities]);
+        $countries = Country::all();
+        $cities = City::where('country', '1')->get();
+        return view('auth.register', ['countries' => $countries, 'cities' => $cities]);
     }
 }

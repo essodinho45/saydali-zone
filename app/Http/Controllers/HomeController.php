@@ -175,7 +175,7 @@ class HomeController extends Controller
             } else {
                 $fileName = 'default_logo';
             }
-            if ($request['password'] != $request['password-confirm']) {
+            if ($request['password'] != $request['password_confirmation']) {
                 abort(500);
                 return;
             }

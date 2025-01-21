@@ -7,7 +7,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable implements MustVerifyEmail
+// class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use Notifiable;
 
@@ -17,8 +18,28 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $fillable = [
-        'f_name', 's_name', 'commercial_name', 'username', 'email', 'user_category_id', 'licence_number', 'password',
-        'country', 'city', 'region', 'address', 'tel1', 'tel2', 'mob1', 'mob2', 'fax1', 'fax2', 'email2', 'logo_image', 'api_token', 'device_key'
+        'f_name',
+        's_name',
+        'commercial_name',
+        'username',
+        'email',
+        'user_category_id',
+        'licence_number',
+        'password',
+        'country',
+        'city',
+        'region',
+        'address',
+        'tel1',
+        'tel2',
+        'mob1',
+        'mob2',
+        'fax1',
+        'fax2',
+        'email2',
+        'logo_image',
+        'api_token',
+        'device_key'
     ];
 
     /**
@@ -27,7 +48,8 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     /**
@@ -54,20 +76,20 @@ class User extends Authenticatable implements MustVerifyEmail
     public function children()
     {
         return $this->belongsToMany(User::class, 'user_relations', 'parent_id', 'child_id')
-        ->withPivot(['comp_id','verified','freezed'])
-        ->withTimestamps();
+            ->withPivot(['comp_id', 'verified', 'freezed'])
+            ->withTimestamps();
     }
     public function parents()
     {
         return $this->belongsToMany(User::class, 'user_relations', 'child_id', 'parent_id')
-        ->withPivot(['comp_id','verified','freezed'])
-        ->withTimestamps();
+            ->withPivot(['comp_id', 'verified', 'freezed'])
+            ->withTimestamps();
     }
     public function freezedItems()
     {
-        return $this->belongsToMany(Item::class,'item_user')
-        ->withPivot('freezed')
-        ->withTimestamps();
+        return $this->belongsToMany(Item::class, 'item_user')
+            ->withPivot('freezed')
+            ->withTimestamps();
     }
     public function ordersFromUser()
     {
