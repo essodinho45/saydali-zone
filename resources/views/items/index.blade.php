@@ -490,6 +490,8 @@
                                 var title = "" + data[0].discount + " %" + " | " + data[0].quant;
                             else if (data[0].free_quant > 0)
                                 var title = "" + data[0].quant + " + " + Math.trunc(data[0].free_quant);
+                            console.log(item);
+                            console.log(title);
                             $("#reciever_id" + item).parent().parent().addClass('table-success');
                             $("#reciever_id" + item).parent().parent().attr('data-toggle', "tooltip").attr('title',
                                 title);
