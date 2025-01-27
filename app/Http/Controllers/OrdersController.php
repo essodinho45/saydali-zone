@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Constants;
 use DB;
 use Carbon\Carbon;
 use Cookie;
@@ -236,12 +237,11 @@ class OrdersController extends Controller
                 $item = Item::findOrFail($request->id);
 
                 $allAgents = $item->company->children->filter(function ($value, $key) {
-                    if (($value['user_category_id'] == 2 || $value['user_category_id'] == 4)) {
+                    if (($value['user_category_id'] == Constants::AGENT || $value['user_category_id'] == Constants::FREE_DISTRIBUTOR)) {
                         return true;
                     }
                 });
                 $c = collect();
-                $non_allowed_ids = DB::table('dists_comps')->select('dist_id')->where('comp_id', $item->company->id)->get();
 
                 foreach ($allAgents as $key => $value) {
                     $isFreezed = (bool) (DB::table('user_relations')->where(['child_id' => $value->id, 'parent_id' => $item->company->id])->value('freezed'));
@@ -251,7 +251,7 @@ class OrdersController extends Controller
                 }
 
                 foreach ($allAgents as $agent) {
-                    $c = $c->concat($agent->children->where('user_category_id', 3));
+                    $c = $c->concat($agent->children->where('user_category_id', Constants::DISTRIBUTOR));
                 }
                 $allAgents = $allAgents->concat($c);
                 $allAgents = $allAgents->filter(function ($value, $key) {
@@ -274,13 +274,13 @@ class OrdersController extends Controller
                         $allAgents->forget($key);
                     }
                 }
-                foreach ($allAgents as $key => $value) {
-                    foreach ($non_allowed_ids as $id) {
-                        if ($id->dist_id == $value->id) {
-                            $allAgents->forget($key);
-                        }
-                    }
-                }
+                // foreach ($allAgents as $key => $value) {
+                //     foreach ($non_allowed_ids as $id) {
+                //         if ($id->dist_id == $value->id) {
+                //             $allAgents->forget($key);
+                //         }
+                //     }
+                // }
             }
         } catch (\Exception $e) {
             dd($e);
