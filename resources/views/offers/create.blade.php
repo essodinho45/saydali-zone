@@ -1,5 +1,10 @@
 @extends('layouts.app')
-@if (Auth::user()->user_category_id == 2 || Auth::user()->user_category_id == 3 || Auth::user()->user_category_id == 6)
+@if (in_array(Auth::user()->user_category_id, [
+        Constants::ADMIN,
+        Constants::COMPANY,
+        Constants::AGENT,
+        Constants::DISTRIBUTOR,
+    ]))
     @section('content')
         @auth
             <div class="container py-4">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Constants;
 use Illuminate\Http\Request;
 use App\Offer;
 use App\Basket;
@@ -16,7 +17,7 @@ class OffersController extends Controller
      */
     public function index()
     {
-        if (\Auth::user()->user_category_id == 2 || \Auth::user()->user_category_id == 3) {
+        if (in_array(\Auth::user()->user_category_id, [Constants::COMPANY, Constants::AGENT, Constants::DISTRIBUTOR])) {
             $offers = Offer::where('user_id', \Auth::user()->id)->get();
             $baskets = Basket::where('user_id', \Auth::user()->id)->get();
         } else if (\Auth::user()->user_category_id == 5 || \Auth::user()->user_category_id == 6) {
@@ -42,6 +43,8 @@ class OffersController extends Controller
             $items = Item::whereIn('user_id', \Auth::user()->parents->parents->pluck('id'))->get();
         elseif (\Auth::user()->category->id == 6)
             $items = Item::all();
+        elseif (\Auth::user()->category->id == Constants::COMPANY)
+            $items = Item::where('user_id', \Auth::user()->id)->get();
         return view('offers.create', ['items' => $items]);
     }
 

@@ -4,7 +4,12 @@
     <div class="container py-4">
         <h3 class="w-75 d-inline-block">{{ __('Offers') }}</h3>
         @auth
-            @if (Auth::user()->user_category_id == 2 || Auth::user()->user_category_id == 3 || Auth::user()->user_category_id == 6)
+            @if (in_array(Auth::user()->user_category_id, [
+                    Constants::ADMIN,
+                    Constants::COMPANY,
+                    Constants::AGENT,
+                    Constants::DISTRIBUTOR,
+                ]))
                 <button class="btn btn-info float-right" type="submit" onclick="window.location='{{ route('createOffer') }}'">
                     {{ __('Create Offer') }}
                 </button>
@@ -59,8 +64,8 @@
                                 {{-- <a class="btn btn-primary btn-sm" href="{{ route('showOffer', ['id'=>$offer->id, 'type'=>1]) }}">{{__('Show')}}</a> --}}
                                 @if (Auth::user()->user_category_id == 6 || Auth::user()->id == $offer->user_id)
                                     {{-- <a class="btn btn-secondary btn-sm" href="{{ route('editOffer', ['id'=>$offer->id, 'type'=>1]) }}">{{__('Edit')}}</a> --}}
-                                    <form action="{{ route('deleteOffer', ['id' => $offer->id, 'type' => 1]) }}" method="POST"
-                                        class="d-inline-block">
+                                    <form action="{{ route('deleteOffer', ['id' => $offer->id, 'type' => 1]) }}"
+                                        method="POST" class="d-inline-block">
                                         @csrf
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button class="btn btn-danger btn-sm" type="submit">
@@ -108,8 +113,8 @@
                                 {{-- <a class="btn btn-primary btn-sm" href="{{ route('showOffer', ['id'=>$basket->id, 'type'=>2]) }}">{{__('Show')}}</a> --}}
                                 @if (Auth::user()->user_category_id == 6 || Auth::user()->id == $basket->user_id)
                                     {{-- <a class="btn btn-secondary btn-sm" href="{{ route('editOffer', ['id'=>$basket->id, 'type'=>2]) }}">{{__('Edit')}}</a> --}}
-                                    <form action="{{ route('deleteOffer', ['id' => $basket->id, 'type' => 2]) }}" method="POST"
-                                        class="d-inline-block">
+                                    <form action="{{ route('deleteOffer', ['id' => $basket->id, 'type' => 2]) }}"
+                                        method="POST" class="d-inline-block">
                                         @csrf
                                         <input type="hidden" name="_method" value="DELETE">
                                         <button class="btn btn-danger btn-sm" type="submit">

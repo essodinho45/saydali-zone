@@ -70,12 +70,17 @@
                         onclick="window.location='{{ route('createItem') }}'">
                         {{ __('Create Item') }}
                     </button>
-                @elseif(Auth::user()->user_category_id == 5)
+                @elseif(Auth::user()->user_category_id == Constants::PHARMACIST)
                     <button class="btn btn-info float-right mx-2" type="submit" onclick="sendAllToCart()">
                         {{ __('Send All to Cart') }}
                     </button>
                 @endif
-                @if (Auth::user()->user_category_id == 6 || Auth::user()->user_category_id == 2 || Auth::user()->user_category_id == 3)
+                @if (in_array(Auth::user()->user_category_id, [
+                        Constants::ADMIN,
+                        Constants::COMPANY,
+                        Constants::AGENT,
+                        Constants::DISTRIBUTOR,
+                    ]))
                     <button class="btn btn-secondary float-right" type="submit"
                         onclick="window.location='{{ route('offers') }}'">
                         {{ __('Offers') }}
