@@ -14,25 +14,25 @@ use App\Post;
 |
 */
 //Clear configurations:
-Route::get('/config-clear', function() {
+Route::get('/config-clear', function () {
     $status = Artisan::call('config:clear');
     return '<h1>Configurations cleared</h1>';
 });
 
 //Clear cache:
-Route::get('/cache-clear', function() {
+Route::get('/cache-clear', function () {
     $status = Artisan::call('cache:clear');
     return '<h1>Cache cleared</h1>';
 });
 
 //Clear configuration cache:
-Route::get('/config-cache', function() {
+Route::get('/config-cache', function () {
     $status = Artisan::call('config:cache');
     return '<h1>Configurations cache cleared</h1>';
 });
 
 //Generate Key:
-Route::get('/gen-key', function() {
+Route::get('/gen-key', function () {
     $status = Artisan::call('key:generate');
     return '<h1>Key Generated</h1>';
 });
@@ -44,17 +44,19 @@ Route::get('welcome/{locale}', function ($locale) {
 });
 
 Route::get('/', function () {
-    try{
-        $ads = Advertisement::whereIn('position', [1,2])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
+    try {
+        $ads = Advertisement::whereIn('position', [1, 2])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
         $posts = Post::orderBy('updated_at', 'desc')->get();
-        return view('welcome', ['posts'=>$posts, 'ads'=>$ads]);}
-        catch(\Exception $e){dd($e);}
+        return view('welcome', ['posts' => $posts, 'ads' => $ads]);
+    } catch (\Exception $e) {
+        dd($e);
+    }
 });
 
 
 Auth::routes(['verify' => true]);
 
-Route::get('/firebase', function(){
+Route::get('/firebase', function () {
     return view('firebase');
 })->name('firebase');
 Route::post('/save-push-notification-token', 'HomeController@savePushNotificationToken')->name('save-push-notification-token');
@@ -95,7 +97,7 @@ Route::middleware('verified')->group(function () {
     Route::put('/user/updatePass', 'HomeController@updatePassword')->name('updatePassword');
     Route::put('/user/{id}', 'HomeController@updateUser')->name('updateUser');
 
-    
+
     //news routes
     Route::post('/news', 'PostsController@store')->name('storePost');
     Route::get('news/create', 'PostsController@create')->name('createPost');
@@ -119,6 +121,7 @@ Route::middleware('verified')->group(function () {
     Route::delete('items/{id}', 'ItemsController@destroy')->name('deleteItem');
     Route::post('items/freeze', 'ItemsController@freezeItemByUser')->name('freezeItem');
     Route::get('items/itemsByAgent/{agent_id}', 'ItemsController@itemsByAgent')->name('itemsByAgent');
+    Route::post('setMaxQuantity', 'ItemsController@setMaxQuantity')->name('setMaxQuantity');
 
 
     //orders routes
@@ -146,7 +149,7 @@ Route::middleware('verified')->group(function () {
     Route::get('offers/{type}/{id}', 'OffersController@show')->name('showOffer');
 
     Route::post('ajaxItemRequest', 'ItemsController@ajaxItemRequest');
-    
+
 
     //user relations routes
     Route::get('userRelations/agents', 'UserRelationsController@availableChildren')->name('agents');
@@ -156,10 +159,10 @@ Route::middleware('verified')->group(function () {
     Route::put('userRelations/freeze', 'UserRelationsController@freezeRelation')->name('freezeRelation');
     Route::post('userRelations/requestAg', 'UserRelationsController@requestRelation')->name('requestRelation');
     Route::put('userRelations/verify', 'UserRelationsController@verifyRelation')->name('verifyRelation');
-    
+
     Route::get('userRelations/distributors', 'UserRelationsController@availableChildren')->name('distributors');
     Route::get('userRelations/pharmacists', 'UserRelationsController@availableChildren')->name('pharmacists');
-    
+
     Route::get('userRelations/companies', 'UserRelationsController@availableParents')->name('companies');
     Route::get('userRelations/showFav', 'UserRelationsController@showFavAg')->name('showFav');
     Route::get('userRelations/addFav', 'UserRelationsController@addFavAg')->name('addFav');

@@ -10,16 +10,17 @@
                     {{ $item->titer }}&nbsp;{{ __('mg') }}
                 @endif
         </small>
-        @if (Auth::user()->user_category_id == 2 || Auth::user()->id == 3 || Auth::user()->id == 4)
+        {{-- @if (Auth::user()->user_category_id == 2 || Auth::user()->id == 3 || Auth::user()->id == 4)
             <hr>
             <div class="row">
-                <label for="quantity" class="col-2 offset-3">{{ __('Max Quantity') }}:</label>
+                <label for="max_quantity" class="col-2 offset-3">{{ __('Max Quantity') }}:</label>
                 <input type="number" class="form-control form-control-sm col-2" id="max_quantity" name="max_quantity"
                     min="0">
-                <a class="btn btn-sm btn-secondary col-1 offset-1" href="#">{{ __('Save') }}</a>
+                <a class="btn btn-sm btn-secondary col-1 offset-1" href="#"
+                    onclick="ajaxMaxQuantity({{ $item->id }})">{{ __('Save') }}</a>
             </div>
-        @endif
-        <hr>
+        @endif --}}
+        {{-- <hr> --}}
         <div class="p-2">
             <div>
                 @if ($item->composition)
@@ -156,6 +157,27 @@
                 });
             }
         }
+
+        // function ajaxMaxQuantity(item = null) {
+        //     quantity = $('#max_quantity').val();
+        //     if (quantity > 0) {
+        //         $.ajax({
+        //             type: 'POST',
+        //             url: '/setMaxQuantity',
+        //             data: {
+        //                 item_id: item,
+        //                 quantity: quantity,
+        //             },
+        //             success: function(data) {
+        //                 console.log(data);
+        //                 location.reload();
+        //             },
+        //             error: function(error) {
+        //                 console.log(error);
+        //             }
+        //         });
+        //     }
+        // }
 
         function quantityChange(id) {
             $.ajaxSetup({

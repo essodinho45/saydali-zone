@@ -22,20 +22,14 @@ class ItemsController extends Controller
      */
     public function index()
     {
-        try
-        {
-            if(\Auth::user()->user_category_id == 5 || \Auth::user()->user_category_id == 6)
-                {
-                    $items = Item::with('quantities')->get();
-                    $baskets = Basket::whereDate('to_date','>=', now())->whereDate('from_date','<=', now())->get();
-                }
-            else if(\Auth::user()->user_category_id == 1)
-                {
-                    $items = Item::where('user_id', \Auth::user()->id)->get();
-                    $baskets = Basket::where('user_id', \Auth::user()->id)->get();
-                }
-            elseif(\Auth::user()->user_category_id == 3)
-            {
+        try {
+            if (\Auth::user()->user_category_id == 5 || \Auth::user()->user_category_id == 6) {
+                $items = Item::with('quantities')->get();
+                $baskets = Basket::whereDate('to_date', '>=', now())->whereDate('from_date', '<=', now())->get();
+            } else if (\Auth::user()->user_category_id == 1) {
+                $items = Item::where('user_id', \Auth::user()->id)->get();
+                $baskets = Basket::where('user_id', \Auth::user()->id)->get();
+            } elseif (\Auth::user()->user_category_id == 3) {
                 $non_allowed_ids = DB::table('dists_comps')->select('comp_id')->where('dist_id', \Auth::user()->id)->get();
                 // dd($non_allowed_ids);
                 // $parents = \Auth::user()->parents->where('user_category_id',2);
@@ -54,21 +48,18 @@ class ItemsController extends Controller
                 }
                 $items = Item::whereIn('user_id', $compsIdArr)->get();
                 $baskets = Basket::where('user_id', \Auth::user()->id)->get();
-            }
-            elseif(\Auth::user()->user_category_id == 2)
-            {
+            } elseif (\Auth::user()->user_category_id == 2) {
                 $parents = \Auth::user()->parents()->wherePivot('verified', '=', true)->wherePivot('freezed', '=', false)->get();
                 $items = Item::whereIn('user_id', $parents->pluck('id')->toArray())->get();
                 $baskets = Basket::where('user_id', \Auth::user()->id)->get();
-            }
-            else{
+            } else {
                 $comps = \Auth::user()->parents()->wherePivot('freezed', '=', false)->get();
                 // $compsIdArr = \Auth::user()->parents()->wherePivot('freezed', '=', false)->pluck('id');
                 $items = Item::whereIn('user_id', $comps->pluck('id')->toArray())->get();
-                $baskets = Basket::where('user_id', \Auth::user()->id)->get();   
+                $baskets = Basket::where('user_id', \Auth::user()->id)->get();
                 // dd(\Auth::user()->parents()->get());
             }
-            $ads1 = Advertisement::whereIn('position', [5,6])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
+            $ads1 = Advertisement::whereIn('position', [5, 6])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
             $ads2 = Advertisement::whereIn('position', [6])->where('from_date', '<=', now())->orderBy('to_date', 'desc')->get();
             return view('items.index', ['items' => $items, 'baskets' => $baskets, 'ads1' => $ads1, 'ads2' => $ads2]);
         } catch (\Exception $e) {
@@ -303,6 +294,10 @@ class ItemsController extends Controller
             $baskets = Basket::whereIn('user_id', $ids_array)->get();
         }
         return view('items.ItemsByAgent', ['items' => $items, 'baskets' => $baskets, 'agents' => $agents, 'agent_id' => $agent_id]);
+    }
+    function setMaxQuantity(Request $request)
+    {
+        ;
     }
 
 }

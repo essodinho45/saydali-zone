@@ -6,6 +6,7 @@ use Constants;
 use Illuminate\Http\Request;
 use App\Offer;
 use App\Basket;
+use App\User;
 use App\Item;
 
 class OffersController extends Controller
@@ -39,9 +40,15 @@ class OffersController extends Controller
     {
         if (\Auth::user()->category->id == 2)
             $items = Item::whereIn('user_id', \Auth::user()->parents->pluck('id'))->get();
-        elseif (\Auth::user()->category->id == 3)
-            $items = Item::whereIn('user_id', \Auth::user()->parents->parents->pluck('id'))->get();
-        elseif (\Auth::user()->category->id == 6)
+        elseif (\Auth::user()->category->id == 3) {
+            $parents = \Auth::user()->parents;
+            $comps = [];
+            foreach ($parents as $parent) {
+                $comps = array_merge($comps, $parent->parents->pluck('id')->toArray());
+            }
+            $comps = array_unique($comps);
+            $items = Item::whereIn('user_id', $comps)->get();
+        } elseif (\Auth::user()->category->id == 6)
             $items = Item::all();
         elseif (\Auth::user()->category->id == Constants::COMPANY)
             $items = Item::where('user_id', \Auth::user()->id)->get();
