@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserRequest;
 use DB;
 use Illuminate\Http\Request;
 use App\Post;
@@ -164,9 +165,10 @@ class HomeController extends Controller
         }
         return view('auth.register', ['countries' => $countries, 'cities' => $cities, 'comps' => $comps, 'agents' => $agents]);
     }
-    protected function createUserByAdmin(request $request)
+    protected function createUserByAdmin(UserRequest $request)
     {
         try {
+            $request = $request->validated();
             if (request()->has('logo_image')) {
                 $uploadedImg = request()->file('logo_image');
                 $fileName = time() . '.' . $uploadedImg->getClientOriginalExtension();
