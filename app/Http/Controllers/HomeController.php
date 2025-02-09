@@ -177,10 +177,10 @@ class HomeController extends Controller
             } else {
                 $fileName = 'default_logo';
             }
-            if ($request['password'] != $request['password_confirmation']) {
-                abort(500);
-                return;
-            }
+//            if ($request['password'] != $request['password_confirmation']) {
+//                abort(500);
+//                return;
+//            }
             $user = User::create([
                 'f_name' => $request['f_name'],
                 's_name' => $request['s_name'],
