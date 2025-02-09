@@ -181,28 +181,9 @@ class HomeController extends Controller
 //                abort(500);
 //                return;
 //            }
-            $user = User::create([
-                'f_name' => $request['f_name'],
-                's_name' => $request['s_name'],
-                'username' => $request['username'],
-                'commercial_name' => $request['commercial_name'],
-                'user_category_id' => $request['user_category_id'],
-                'email' => $request['email'],
-                'email2' => $request['email2'],
-                'licence_number' => $request['licence_number'],
-                'country' => $request['country'],
-                'city' => $request['city'],
-                'region' => $request['region'],
-                'address' => $request['address'],
-                'tel1' => $request['tel1'],
-                'tel2' => $request['tel2'],
-                'mob1' => $request['mob1'],
-                'mob2' => $request['mob2'],
-                'fax1' => $request['fax1'],
-                'fax2' => $request['fax2'],
-                'logo_image' => '/images/logos/' . $fileName,
-                'password' => Hash::make($request['password']),
-            ]);
+            $request['password'] = Hash::make($request['password']);
+            $request['logo_image'] = '/images/logos/' . $fileName;
+            $user = User::create($request);
             $user->email_verified_at = now();
             $user->save();
             if (\Auth::user()->category->id == 6) {

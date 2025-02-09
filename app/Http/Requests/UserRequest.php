@@ -45,6 +45,9 @@ class UserRequest extends FormRequest
             'tel2' => ['nullable', 'string', 'max:255'],
             'fax1' => ['nullable', 'string', 'max:255'],
             'fax2' => ['nullable', 'string', 'max:255'],
+            'company' => ['nullable', 'string', 'max:255'],
+            'agent' => ['nullable', 'string', 'max:255'],
+            'comps' => ['nullable', 'array'],
             'logo_image' => ['sometimes', 'image', 'mimes:jpg,jpeg,png,bmp,svg', 'max:5000'],
         ];
     }
