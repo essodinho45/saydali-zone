@@ -281,10 +281,10 @@ class OrdersController extends Controller
         $item = Item::findOrFail($request->item);
         $reciever = User::findOrFail($request->id);
         // dd($reciever->category->id);
-        if ($reciever->category->id != 2) {
+        if ($reciever->category->id != Constants::AGENT) {
             $recieverParents = User::findOrFail($request->id)->parents;
             $offersAgents = $recieverParents->where('user_category_id', 2)->pluck('id');
-        } else
+        }
             $offersAgents[] = (int) $request->id;
         $offer = $item->offers
             ->where('to_date', '>=', now())

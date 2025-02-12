@@ -493,11 +493,12 @@
                         console.log(Object.values(data));
                         data = Object.values(data);
                         if (data.length > 0) {
+                            var title = "";
                             for(var i = 0; i < data.length; i++){
                                 if (data[i].discount > 0)
-                                    var title = "" + data[i].discount + " %" + " | " + data[i].quant;
+                                    title = "" + data[i].discount + " %" + " | " + data[i].quant;
                                 else if (data[i].free_quant > 0){
-                                    var title = "" + data[i].quant + " + " + Math.trunc(data[i].free_quant);
+                                    title = "" + data[i].quant + " + " + Math.trunc(data[i].free_quant);
                                     if(data[i].free_item_name != "")
                                         title += " (" + data[i].free_item_name + ")";
                                 }
