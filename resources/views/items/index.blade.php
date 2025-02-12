@@ -491,11 +491,13 @@
                         console.log("___________________________________");
                         console.log(data);
                         console.log(Object.values(data));
+                        console.log("___________________________________");
                         data = Object.values(data);
                         if (data.length > 0) {
                             var title = "";
                             console.log("init: "+title);
                             for(var i = 0; i < data.length; i++){
+                                console.log(data[i]);
                                 if (data[i].discount > 0)
                                     title = "" + data[i].discount + " %" + " | " + data[i].quant;
                                 else if (data[i].free_quant > 0){
