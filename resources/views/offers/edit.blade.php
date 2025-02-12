@@ -199,11 +199,11 @@
                                         @if($offer->from_date > now())
                                             <a class="btn btn-primary btn-sm" id="addbtn{{ $item->id }}"
                                                href="#ItemsTable"
-                                               onclick="addToBasket({{ $item->id }})"
+                                               onclick="addToBasket({{ $item->id }}, {{$item->price}})"
                                             >{{ __('Add to Basket') }}</a>
                                             <a class="btn btn-danger btn-sm disabled" id="delbtn{{ $item->id }}"
                                                href="#ItemsTable"
-                                               onclick="removeFromBasket({{ $item->id }})">{{ __('Delete') }}</a>
+                                               onclick="removeFromBasket({{ $item->id }}, {{$item->price}})">{{ __('Delete') }}</a>
                                             <input type="hidden" id="added{{ $item->id }}" value="false">
                                         @endif
                                     </td>
@@ -213,7 +213,8 @@
                         </table>
                         <hr>
                         <div class="form-group row">
-                            <label class="col-md-3" for="price">{{ __('Price') }}</label>
+                            <div class="col-12 mb-3">{{__('Original Price')}}: <b id="price_val">{{$offer->original_price}}</b></div>
+                            <label class="col-md-3" for="price">{{ __('Basket Price') }}</label>
                             <div class="col-md-6">
                                 <input id="price" type="number"
                                        class="form-control @error('price') is-invalid @enderror" name="price"
@@ -273,26 +274,32 @@
         <link href="{{ asset('css/table.min.css') }}" rel="stylesheet">
         <script>
             var basketItems = [];
-
-            function addToBasket(id) {
+            var originalPrice = 0;
+            function addToBasket(id, price) {
                 if ($('#added' + id).val() == 'false') {
                     console.log($('#added' + id).val());
-                    basketItems.push(id + "-" + $('#item_quant_' + id).val());
+                    var quant = $('#item_quant_' + id).val();
+                    originalPrice += price * quant;
+                    basketItems.push(id + "-" + quant);
+                    console.log(originalPrice);
                     $("#basket_info").val(basketItems);
                     $('#added' + id).val('true');
                     $('#addbtn' + id).addClass('disabled');
                     $('#delbtn' + id).removeClass('disabled');
+                    $('#price_val').html(originalPrice);
                 }
             }
 
-            function removeFromBasket(id) {
+            function removeFromBasket(id, price) {
                 if ($('#added' + id).val() == 'true') {
                     console.log($('#added' + id).val());
                     var result = basketItems.find((item) => {
-                        return item.startsWith(id);
+                        return item.startsWith(id+'-');
                     });
                     var index = basketItems.indexOf(result);
                     if (index !== -1) {
+                        var quant = basketItems[index].split('-')[1];
+                        originalPrice -= price * quant;
                         basketItems.splice(index, 1);
                     }
                     $("#basket_info").val(basketItems);
@@ -301,6 +308,7 @@
                     $('#delbtn' + id).addClass('disabled');
                     $('#addbtn' + id).removeClass('disabled');
                 }
+                $('#price_val').html(originalPrice);
             }
             $(document).ready(function() {
                 // itemsOfferAjax();

@@ -88,7 +88,8 @@
                         <th scope="col">#</th>
                         <th scope="col">{{ __('Name') }}</th>
                         <th scope="col">{{ __('Company') }}</th>
-                        <th scope="col">{{ __('Price') }}</th>
+                        <th scope="col">{{ __('Original Price') }}</th>
+                        <th scope="col">{{ __('Basket Price') }}</th>
                         <th scope="col">{{ __('From Date') }}</th>
                         <th scope="col">{{ __('To Date') }}</th>
                         <th scope="col">{{ __('Actions') }}</th>
@@ -102,6 +103,7 @@
                             <th scope="row" rowspan="2">{{ $basket->id }}</th>
                             <td>{{ $basket->name }}</td>
                             <td>{{ $basket->user->f_name }}</td>
+                            <td>{{ round($basket->original_price, 2) }}</td>
                             <td>{{ round($basket->price, 2) }}</td>
                             <td>{{ date('d-m-Y', strtotime($basket->from_date)) }}</td>
                             <td>{{ date('d-m-Y', strtotime($basket->to_date)) }}</td>
