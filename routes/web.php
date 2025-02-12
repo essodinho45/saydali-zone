@@ -145,7 +145,7 @@ Route::middleware('verified')->group(function () {
     Route::delete('offers/{type}/{id}', 'OffersController@destroy')->name('deleteOffer');
     Route::get('offers/create', 'OffersController@create')->name('createOffer');
     Route::get('offers/{type}/{id}/edit', 'OffersController@edit')->name('editOffer');
-    Route::put('offers/{id}', 'OffersController@update')->name('updateOffer');
+    Route::put('offers/{type}/{id}', 'OffersController@update')->name('updateOffer');
     Route::get('offers/{type}/{id}', 'OffersController@show')->name('showOffer');
 
     Route::post('ajaxItemRequest', 'ItemsController@ajaxItemRequest');

@@ -71,32 +71,24 @@ class OffersController extends Controller
             $offer->price = $request->price;
             $offer->from_date = $request->from_date;
             $offer->to_date = $request->to_date;
-            try {
-                $offer->save();
-            } catch (\Exception $e) {
-                dd($e);
-            }
+            $offer->save();
             $basket_items = explode(',', $request->basket_info);
             foreach ($basket_items as $item) {
                 $item = explode('-', $item);
                 $offer->items()->attach((int) $item[0], ['quantity' => (int) $item[1]]);
             }
         } else {
-            try {
-                $offer = new Offer();
-                $offer->user_id = \Auth::user()->id;
-                $offer->item_id = $request->item_id;
-                $offer->remark = $request->remark;
-                $offer->from_date = $request->from_date;
-                $offer->to_date = $request->to_date;
-                $offer->discount = $request->discount ?? 0;
-                $offer->free_quant = $request->free_quant ?? 0;
-                $offer->quant = $request->quant ?? 0;
-                $offer->free_item = $request->free_item;
-                $offer->save();
-            } catch (\Exception $e) {
-                dd($e);
-            }
+            $offer = new Offer();
+            $offer->user_id = \Auth::user()->id;
+            $offer->item_id = $request->item_id;
+            $offer->remark = $request->remark;
+            $offer->from_date = $request->from_date;
+            $offer->to_date = $request->to_date;
+            $offer->discount = $request->discount ?? 0;
+            $offer->free_quant = $request->free_quant ?? 0;
+            $offer->quant = $request->quant ?? 0;
+            $offer->free_item = $request->free_item;
+            $offer->save();
         }
         return redirect('/offers');
     }
@@ -118,9 +110,29 @@ class OffersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit($type, $id)
     {
-        //
+        if($type == 1)
+            $offer = Offer::findOrFail($id);
+        else{
+            $offer = Basket::findOrFail($id);
+            $offer->isBasket = true;
+        }
+        if (\Auth::user()->category->id == 2)
+            $items = Item::whereIn('user_id', \Auth::user()->parents->pluck('id'))->get();
+        elseif (\Auth::user()->category->id == 3) {
+            $parents = \Auth::user()->parents;
+            $comps = [];
+            foreach ($parents as $parent) {
+                $comps = array_merge($comps, $parent->parents->pluck('id')->toArray());
+            }
+            $comps = array_unique($comps);
+            $items = Item::whereIn('user_id', $comps)->get();
+        } elseif (\Auth::user()->category->id == 6)
+            $items = Item::all();
+        elseif (\Auth::user()->category->id == Constants::COMPANY)
+            $items = Item::where('user_id', \Auth::user()->id)->get();
+        return view('offers.edit', compact('items', 'offer'));
     }
 
     /**
@@ -130,9 +142,23 @@ class OffersController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $type, $id)
     {
-        //
+        if($type == 1){
+            $offer = Offer::findOrFail($id);
+            $offer->update($request->all());
+        }
+        else{
+            $offer = Basket::findOrFail($id);
+            $offer->update($request->all());
+            Basket::findOrFail($id)->items()->detach();
+            $basket_items = explode(',', $request->basket_info);
+            foreach ($basket_items as $item) {
+                $item = explode('-', $item);
+                $offer->items()->attach((int) $item[0], ['quantity' => (int) $item[1]]);
+            }
+        }
+        return redirect('/offers');
     }
 
     /**

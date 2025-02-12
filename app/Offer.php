@@ -8,7 +8,7 @@ class Offer extends Model
 {
     //
     protected $fillable = [
-        'user_id', 'item_id', 'remark', 'discount', 'free_quant', 'free_item', 'from_date', 'to_date'
+        'user_id', 'item_id', 'remark', 'discount', 'quant', 'free_quant', 'free_item', 'from_date', 'to_date'
     ];
     protected $appends = ['free_item_name'];
     public function item()
