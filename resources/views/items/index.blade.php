@@ -502,7 +502,7 @@
                                     if(data[i].free_item_name != "")
                                         title += " (" + data[i].free_item_name + ")";
                                 }
-                                title += " <br>"
+                                title += "\r"
                             }
                             console.log(item);
                             console.log(title);
