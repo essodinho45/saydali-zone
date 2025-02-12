@@ -192,7 +192,7 @@
                                     <td>{{ round($item->price, 2) }}</td>
                                     <td>{{ round($item->customer_price, 2) }}</td>
                                     <td>{{ $item->type->ar_name }}</td>
-                                    <td><input id="item_quant_{{ $item->id }}" type="number"
+                                    <td><input id="item_quant_{{ $item->id }}" type="number" min="0"
                                                class="form-control w-50" name="item_quant_{{ $item->id }}"
                                                value="{{$offer->items()->wherePivot('item_id', $item->id)->first()->pivot->quantity}}" @if($offer->from_date <= now()) disabled @endif ></td>
                                     <td>
