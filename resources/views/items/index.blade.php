@@ -498,6 +498,10 @@
                             console.log("init: "+title);
                             for(var i = 0; i < data.length; i++){
                                 console.log(data[i]);
+                                console.log(data[i].discount);
+                                console.log(data[i].quant);
+                                console.log(data[i].free_quant);
+                                console.log(data[i].free_item_name);
                                 if (data[i].discount > 0)
                                     title = "" + data[i].discount + " %" + " | " + data[i].quant;
                                 else if (data[i].free_quant > 0){
