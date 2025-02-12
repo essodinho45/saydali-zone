@@ -494,6 +494,7 @@
                         data = Object.values(data);
                         if (data.length > 0) {
                             var title = "";
+                            console.log("init: "+title);
                             for(var i = 0; i < data.length; i++){
                                 if (data[i].discount > 0)
                                     title = "" + data[i].discount + " %" + " | " + data[i].quant;
@@ -502,9 +503,10 @@
                                     if(data[i].free_item_name != "")
                                         title += " (" + data[i].free_item_name + ")";
                                 }
-                                title += "\r"
+                                console.log("before line: "+title);
+                                title += "\n"
+                                console.log("after line: "+title);
                             }
-                            console.log(item);
                             console.log(title);
                             $("#reciever_id" + item).parent().parent().addClass('table-success');
                             $("#reciever_id" + item).parent().parent().attr('data-toggle', "tooltip").attr('title',
