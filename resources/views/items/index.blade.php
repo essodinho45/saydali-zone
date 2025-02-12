@@ -493,10 +493,16 @@
                         console.log(Object.values(data));
                         data = Object.values(data);
                         if (data.length > 0) {
-                            if (data[0].discount > 0)
-                                var title = "" + data[0].discount + " %" + " | " + data[0].quant;
-                            else if (data[0].free_quant > 0)
-                                var title = "" + data[0].quant + " + " + Math.trunc(data[0].free_quant);
+                            for(var i = 0; i < data.length; i++){
+                                if (data[i].discount > 0)
+                                    var title = "" + data[i].discount + " %" + " | " + data[i].quant;
+                                else if (data[i].free_quant > 0){
+                                    var title = "" + data[i].quant + " + " + Math.trunc(data[i].free_quant);
+                                    if(data[i].free_item_name != "")
+                                        title += " (" + data[i].free_item_name + ")";
+                                }
+                                title += " <br>"
+                            }
                             console.log(item);
                             console.log(title);
                             $("#reciever_id" + item).parent().parent().addClass('table-success');

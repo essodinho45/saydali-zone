@@ -24,21 +24,17 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        try {
-            if (in_array(\Auth::user()->user_category_id, [2, 3, 4])) {
-                $orders = Order::where('reciever_id', \Auth::user()->id);
-                $last_order_id = clone $orders;
-                $last_order_id = $last_order_id->orderByDesc('created_at')->first()->id ?? null;
-                Cookie::queue('last-seen-orders', $last_order_id);
-            } else if (\Auth::user()->user_category_id == 5)
-                $orders = Order::where('sender_id', \Auth::user()->id);
-            else if (\Auth::user()->user_category_id == 6)
-                $orders = Order::query();
-            $orders = $orders->orderByDesc('created_at')->get();
-            return view('orders.index', ['orders' => $orders]);
-        } catch (\Exception $e) {
-            dd($e);
-        }
+        if (in_array(\Auth::user()->user_category_id, [2, 3, 4])) {
+            $orders = Order::where('reciever_id', \Auth::user()->id);
+            $last_order_id = clone $orders;
+            $last_order_id = $last_order_id->orderByDesc('created_at')->first()->id ?? null;
+            Cookie::queue('last-seen-orders', $last_order_id);
+        } else if (\Auth::user()->user_category_id == 5)
+            $orders = Order::where('sender_id', \Auth::user()->id);
+        else if (\Auth::user()->user_category_id == 6)
+            $orders = Order::query();
+        $orders = $orders->orderByDesc('created_at')->get();
+        return view('orders.index', ['orders' => $orders]);
     }
 
     /**
@@ -67,20 +63,12 @@ class OrdersController extends Controller
                     $items = $basket->groupBy('item_id');
                     if ((bool) $basket->first()->is_basket) {
                         foreach ($items as $item) {
-                            try {
-                                $order->baskets()->attach($item->first()->item_id, ['quantity' => $item->sum('quantity')]);
-                            } catch (\Exception $e) {
-                                dd($e);
-                            }
+                            $order->baskets()->attach($item->first()->item_id, ['quantity' => $item->sum('quantity')]);
                         }
                     } else {
                         foreach ($items as $item) {
                             $remark = $item->first()->remark;
-                            try {
-                                $order->items()->attach($item->first()->item_id, ['quantity' => $item->sum('quantity'), 'free_quant' => $item->sum('free_quant'), 'price' => $item->sum('price'), 'sender_remark' => $remark]);
-                            } catch (\Exception $e) {
-                                dd($e);
-                            }
+                            $order->items()->attach($item->first()->item_id, ['quantity' => $item->sum('quantity'), 'free_quant' => $item->sum('free_quant'), 'price' => $item->sum('price'), 'sender_remark' => $remark]);
                         }
                     }
                 }
@@ -152,68 +140,72 @@ class OrdersController extends Controller
     }
     public function addToCart(Request $request)
     {
-        try {
-            $freeQuant = 0;
-            $offersAgents = [];
-            $reciever = User::findOrFail($request->reciever_id);
-            // dd($reciever->category->id);
-            if ($reciever->category->id != 2) {
-                $recieverParents = User::findOrFail($request->reciever_id)->parents;
-                $offersAgents = $recieverParents->where('user_category_id', 2)->pluck('id');
-            } else
-                $offersAgents[] = (int) $request->reciever_id;
-            $cart = Cart::where(['sender_id' => \Auth::user()->id, 'reciever_id' => $request->reciever_id, 'item_id' => $request->item_id, 'is_basket' => ($request->isBasket == "true")])->get();
-            if ($cart->count() == 0) {
-                $cart = new Cart([
-                    'sender_id' => \Auth::user()->id,
-                    'reciever_id' => $request->reciever_id,
-                    'item_id' => $request->item_id,
-                    'remark' => $request->sender_remark,
-                    'quantity' => $request->quantity,
-                    'is_basket' => ($request->isBasket == "true")
-                ]);
-                if ($request->isBasket == "true") {
-                    try {
-                        $price = $request->quantity * (Basket::findOrFail($request->item_id)->price);
-                    } catch (\Exception $e) {
-                        dd($e);
-                    }
-                } else {
-                    $item = Item::findOrFail($request->item_id);
-                    $currentOffers = $item->offers->where('to_date', '>=', now())->whereIn('user_id', $offersAgents);
-                    if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $request->quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
-                        $item->price -= (float) $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
-                    }
-                    if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $request->quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $request->item_id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
-                        $freeQuant = (int) (($request->quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
-                    }
-                    $price = (float) ($request->quantity * $item->price);
+        $freeQuant = 0;
+        $offersAgents = [];
+        $reciever = User::findOrFail($request->reciever_id);
+        // dd($reciever->category->id);
+        if ($reciever->category->id != 2) {
+            $recieverParents = User::findOrFail($request->reciever_id)->parents;
+            $offersAgents = $recieverParents->where('user_category_id', 2)->pluck('id');
+        } else
+            $offersAgents[] = (int) $request->reciever_id;
+        $cart = Cart::where(['sender_id' => \Auth::user()->id, 'reciever_id' => $request->reciever_id, 'item_id' => $request->item_id, 'is_basket' => ($request->isBasket == "true")])->get();
+        if ($cart->count() == 0) {
+            $cart = new Cart([
+                'sender_id' => \Auth::user()->id,
+                'reciever_id' => $request->reciever_id,
+                'item_id' => $request->item_id,
+                'remark' => $request->sender_remark,
+                'quantity' => $request->quantity,
+                'is_basket' => ($request->isBasket == "true")
+            ]);
+            if ($request->isBasket == "true") {
+                try {
+                    $price = $request->quantity * (Basket::findOrFail($request->item_id)->price);
+                } catch (\Exception $e) {
+                    dd($e);
                 }
-                $cart->price = $price;
-                $cart->free_quant = $freeQuant;
-                $cart->is_basket = ($request->isBasket == "true");
             } else {
-                $cart = $cart->first();
-                $quantity = $cart->quantity + $request->quantity;
-                if ($request->isBasket == "true")
-                    $price = $quantity * (Basket::findOrFail($request->item_id)->price);
-                else {
-                    $item = Item::findOrFail($request->item_id);
-                    $currentOffers = $item->offers->where('to_date', '>=', now())->whereIn('user_id', $offersAgents);
-                    if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
-                        $item->price -= $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
-                    }
-                    if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $request->item_id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
-                        $freeQuant = (int) (($quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
-                    }
-                    $price = $quantity * $item->price;
+                $item = Item::findOrFail($request->item_id);
+                $currentOffers = $item->offers
+                    ->where('to_date', '>=', now())
+                    ->where('from_date', '<=', now())
+                    ->whereIn('user_id', $offersAgents);
+                if ($currentOffers->count() > 0
+                    && $currentOffers->where('discount', '>', 0)->count() > 0
+                    && $request->quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
+                    $item->price -= (float) $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
                 }
-                $cart->quantity = $quantity;
-                $cart->free_quant = $freeQuant;
-                $cart->price = $price;
+                if ($currentOffers->count() > 0
+                    && $currentOffers->where('free_quant', '>', 0)->count() > 0
+                    && $request->quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant
+                    && $request->item_id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
+                    $freeQuant = (int) (($request->quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
+                }
+                $price = (float) ($request->quantity * $item->price);
             }
-        } catch (\Exception $e) {
-            dd($e);
+            $cart->price = $price;
+            $cart->free_quant = $freeQuant;
+            $cart->is_basket = ($request->isBasket == "true");
+        } else {
+            $cart = $cart->first();
+            $quantity = $cart->quantity + $request->quantity;
+            if ($request->isBasket == "true")
+                $price = $quantity * (Basket::findOrFail($request->item_id)->price);
+            else {
+                $item = Item::findOrFail($request->item_id);
+                $currentOffers = $item->offers->where('to_date', '>=', now())->whereIn('user_id', $offersAgents);
+                if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
+                    $item->price -= $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
+                }
+                if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $request->item_id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
+                    $freeQuant = (int) (($quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
+                }
+                $price = $quantity * $item->price;
+            }
+            $cart->quantity = $quantity;
+            $cart->free_quant = $freeQuant;
+            $cart->price = $price;
         }
         $cart->save();
         return '';
@@ -230,60 +222,56 @@ class OrdersController extends Controller
     }
     public function postItem(Request $request)
     {
-        try {
-            if ($request->isBasket == "true")
-                return Basket::findOrFail($request->id)->user;
-            else {
-                $item = Item::findOrFail($request->id);
+        if ($request->isBasket == "true")
+            return Basket::findOrFail($request->id)->user;
+        else {
+            $item = Item::findOrFail($request->id);
 
-                $allAgents = $item->company->children->filter(function ($value, $key) {
-                    if (($value['user_category_id'] == Constants::AGENT || $value['user_category_id'] == Constants::FREE_DISTRIBUTOR)) {
-                        return true;
-                    }
-                });
-                $c = collect();
-
-                foreach ($allAgents as $key => $value) {
-                    $isFreezed = (bool) (DB::table('user_relations')->where(['child_id' => $value->id, 'parent_id' => $item->company->id])->value('freezed'));
-                    if ($isFreezed) {
-                        $allAgents->forget($key);
-                    }
+            $allAgents = $item->company->children->filter(function ($value, $key) {
+                if (($value['user_category_id'] == Constants::AGENT || $value['user_category_id'] == Constants::FREE_DISTRIBUTOR)) {
+                    return true;
                 }
+            });
+            $c = collect();
 
-                foreach ($allAgents as $agent) {
-                    $c = $c->concat($agent->children->where('user_category_id', Constants::DISTRIBUTOR));
+            foreach ($allAgents as $key => $value) {
+                $isFreezed = (bool) (DB::table('user_relations')->where(['child_id' => $value->id, 'parent_id' => $item->company->id])->value('freezed'));
+                if ($isFreezed) {
+                    $allAgents->forget($key);
                 }
-                $allAgents = $allAgents->concat($c);
-                $allAgents = $allAgents->filter(function ($value, $key) {
-                    if ($value['city'] == \Auth::user()->city) {
-                        return true;
-                    }
-                });
-
-                $favAg = \Auth::user()->children()->wherePivot('comp_id', '=', $item->company->id)->get();
-                foreach ($allAgents as $key => $value) {
-                    if ($favAg->contains('id', $value->id))
-                        $allAgents->forget($key);
-                }
-                foreach ($favAg as $fA)
-                    $allAgents->prepend($fA);
-
-                foreach ($allAgents as $key => $value) {
-
-                    if ($item->isFreezedByUser($value->id)) {
-                        $allAgents->forget($key);
-                    }
-                }
-                // foreach ($allAgents as $key => $value) {
-                //     foreach ($non_allowed_ids as $id) {
-                //         if ($id->dist_id == $value->id) {
-                //             $allAgents->forget($key);
-                //         }
-                //     }
-                // }
             }
-        } catch (\Exception $e) {
-            dd($e);
+
+            foreach ($allAgents as $agent) {
+                $c = $c->concat($agent->children->where('user_category_id', Constants::DISTRIBUTOR));
+            }
+            $allAgents = $allAgents->concat($c);
+            $allAgents = $allAgents->filter(function ($value, $key) {
+                if ($value['city'] == \Auth::user()->city) {
+                    return true;
+                }
+            });
+
+            $favAg = \Auth::user()->children()->wherePivot('comp_id', '=', $item->company->id)->get();
+            foreach ($allAgents as $key => $value) {
+                if ($favAg->contains('id', $value->id))
+                    $allAgents->forget($key);
+            }
+            foreach ($favAg as $fA)
+                $allAgents->prepend($fA);
+
+            foreach ($allAgents as $key => $value) {
+
+                if ($item->isFreezedByUser($value->id)) {
+                    $allAgents->forget($key);
+                }
+            }
+            // foreach ($allAgents as $key => $value) {
+            //     foreach ($non_allowed_ids as $id) {
+            //         if ($id->dist_id == $value->id) {
+            //             $allAgents->forget($key);
+            //         }
+            //     }
+            // }
         }
         return $allAgents->unique();
     }
@@ -298,82 +286,73 @@ class OrdersController extends Controller
             $offersAgents = $recieverParents->where('user_category_id', 2)->pluck('id');
         } else
             $offersAgents[] = (int) $request->id;
-        try {
-            $offer = $item->offers->where('to_date', '>=', now())->whereIn('user_id', $offersAgents);
-        } catch (\Exception $e) {
-            return dd($e);
-        }
+        $offer = $item->offers
+            ->where('to_date', '>=', now())
+            ->where('from_date', '<=', now())
+            ->whereIn('user_id', $offersAgents);
         return $offer;
     }
     public function verifyItem(Request $request)
     {
         $item = Item::findOrFail($request->item);
         $order = Order::findOrFail($request->order);
-        try {
-            $order->items()->updateExistingPivot($item, array('verified_at' => now(), 'reciever_remark' => $request->remark), false);
-            $order->save();
-        } catch (\Exception $e) {
-            dd($e);
-        }
+        $order->items()->updateExistingPivot($item, array('verified_at' => now(), 'reciever_remark' => $request->remark), false);
+        $order->save();
         return "success";
     }
     public function addAllItemsToCart(Request $request)
     {
         // dd($request->objects);
-        try {
-            foreach ($request->objects as $obj) {
-                $obj = (object) $obj;
-                $freeQuant = 0;
-                $cart = Cart::where(['sender_id' => \Auth::user()->id, 'reciever_id' => $obj->reciever, 'item_id' => $obj->id, 'is_basket' => false])->get();
-                if ($cart->count() == 0) {
-                    $cart = new Cart([
-                        'sender_id' => \Auth::user()->id,
-                        'reciever_id' => $obj->reciever,
-                        'item_id' => $obj->id,
-                        'remark' => null,
-                        'quantity' => $obj->quant,
-                        'is_basket' => false
-                    ]);
-                    // if($request->isBasket == "true")
-                    //     {try{$price = $request->quantity * (Basket::findOrFail($request->item_id)->price);}
-                    //     catch(\Exception $e){dd($e);}
-                    //     }
-                    // else
-                    //     {
-                    $item = Item::findOrFail($obj->id);
-                    $currentOffers = $item->offers->where('to_date', '>=', now())->where('user_id', $obj->reciever);
-                    if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $obj->quant >= $currentOffers->where('discount', '>', 0)->first->quantity) {
-                        $item->price -= (float) $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
-                    }
-                    if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $obj->quant >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $obj->id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
-                        $freeQuant = (int) (($obj->quant / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
-                    }
-                    $price = (float) ($obj->quant * $item->price);
-                    // }
-                    $cart->price = $price;
-                    $cart->free_quant = $freeQuant;
-                    $cart->is_basket = false;
-                } else {
-                    $cart = $cart->first();
-                    $quantity = $cart->quantity + $obj->quant;
-                    $item = Item::findOrFail($obj->id);
-                    $currentOffers = $item->offers->where('to_date', '>=', now())->where('user_id', $obj->reciever);
-                    if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
-                        $item->price -= $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
-                    }
-                    if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $obj->id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
-                        $freeQuant = (int) (($quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
-                    }
-                    $price = $quantity * $item->price;
-
-                    $cart->quantity = $quantity;
-                    $cart->free_quant = $freeQuant;
-                    $cart->price = $price;
+        foreach ($request->objects as $obj) {
+            $obj = (object) $obj;
+            $freeQuant = 0;
+            $cart = Cart::where(['sender_id' => \Auth::user()->id, 'reciever_id' => $obj->reciever, 'item_id' => $obj->id, 'is_basket' => false])->get();
+            if ($cart->count() == 0) {
+                $cart = new Cart([
+                    'sender_id' => \Auth::user()->id,
+                    'reciever_id' => $obj->reciever,
+                    'item_id' => $obj->id,
+                    'remark' => null,
+                    'quantity' => $obj->quant,
+                    'is_basket' => false
+                ]);
+                // if($request->isBasket == "true")
+                //     {try{$price = $request->quantity * (Basket::findOrFail($request->item_id)->price);}
+                //     catch(\Exception $e){dd($e);}
+                //     }
+                // else
+                //     {
+                $item = Item::findOrFail($obj->id);
+                $currentOffers = $item->offers->where('to_date', '>=', now())->where('user_id', $obj->reciever);
+                if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $obj->quant >= $currentOffers->where('discount', '>', 0)->first->quantity) {
+                    $item->price -= (float) $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
                 }
-                $cart->save();
+                if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $obj->quant >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $obj->id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
+                    $freeQuant = (int) (($obj->quant / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
+                }
+                $price = (float) ($obj->quant * $item->price);
+                // }
+                $cart->price = $price;
+                $cart->free_quant = $freeQuant;
+                $cart->is_basket = false;
+            } else {
+                $cart = $cart->first();
+                $quantity = $cart->quantity + $obj->quant;
+                $item = Item::findOrFail($obj->id);
+                $currentOffers = $item->offers->where('to_date', '>=', now())->where('user_id', $obj->reciever);
+                if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
+                    $item->price -= $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
+                }
+                if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $obj->id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
+                    $freeQuant = (int) (($quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
+                }
+                $price = $quantity * $item->price;
+
+                $cart->quantity = $quantity;
+                $cart->free_quant = $freeQuant;
+                $cart->price = $price;
             }
-        } catch (\Exception $e) {
-            dd($e);
+            $cart->save();
         }
         return "success";
     }
