@@ -15,14 +15,11 @@ class VerifiedByAdmin
      */
     public function handle($request, Closure $next)
     {
-        try{
         if (auth()->user()->email_verified_at != null && !auth()->user()->freezed) {
             return $next($request);
         }
         elseif(auth()->user()->freezed)
             return redirect()->route('freezed.notice');
-        return redirect()->route('verification.notice');}
-        catch(\Exception $e)
-        {dd($e);}
+        return redirect()->route('verification.notice');
     }
 }

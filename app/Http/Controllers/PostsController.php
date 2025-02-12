@@ -36,7 +36,6 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        try{
         $post = new Post();
         $post->user_id = \Auth::user()->id;
         $post->title = request('title');
@@ -44,9 +43,8 @@ class PostsController extends Controller
 
         $post->save();
 
-        return redirect('/news');}
-        catch(\Exception $e){$e;}
-        
+        return redirect('/news');
+
     }
 
     /**

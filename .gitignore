@@ -53,3 +53,7 @@ _ide_*
 .history
 .ionide
 L8update.zip
+/.idea/php.xml
+/.idea/phpunit.xml
+/.idea/vcs.xml
+/.idea/workspace.xml

@@ -30,6 +30,7 @@
 
 <body>
     <div id="app">
+
         <nav class="navbar navbar-expand-md navbar-dark bg-navyblue shadow-sm text-lightkiwi"
             style="line-height: normal;">
             <div class="container">
@@ -156,18 +157,12 @@
         </nav>
 
         <main>
-            {{-- <div class="position-absolute w-100 d-flex flex-column p-0" style="z-index: 1; height: 0%">
-                <div class="toast mr-auto" role="alert" data-delay="700" data-autohide="true">
-                    <div class="toast-header">
-                        <strong class="mr-auto text-primary">Toast</strong>
-                        <small class="text-muted">3 mins ago</small>
-                        <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
-                            <span aria-hidden="true">×</span>
-                        </button>
-                    </div>
-                    <div class="toast-body" id="toast-body"></div>
-                </div>
-              </div>         --}}
+{{--            @if (session('error'))--}}
+{{--                <div class="alert alert-danger alert-dismissible fade show mx-5 mb-0">--}}
+{{--                    <button type="button" class="close" data-dismiss="alert">&times;</button>--}}
+{{--                    {{session('error')}}--}}
+{{--                </div>--}}
+{{--            @endif--}}
             @yield('content')
         </main>
     </div>

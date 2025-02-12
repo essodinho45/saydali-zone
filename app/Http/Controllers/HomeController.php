@@ -45,7 +45,8 @@ class HomeController extends Controller
             $posts = Post::orderBy('updated_at', 'desc')->get();
             return view('welcome', ['posts' => $posts, 'ads' => $ads]);
         } catch (\Exception $e) {
-            dd($e);
+//            dd($e);
+            return;
         }
 
     }
@@ -142,7 +143,7 @@ class HomeController extends Controller
             $response = City::where('country', $country)->get();
             return $response;
         } catch (\Exception $e) {
-            return dd($e);
+            return;
         }
     }
 
@@ -222,7 +223,7 @@ class HomeController extends Controller
                 return redirect()->route('home');
             }
         } catch (\Exception $e) {
-            return dd($e);
+            return;
         }
     }
     // public function admin_credential_rules(array $data)

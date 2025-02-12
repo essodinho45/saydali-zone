@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterUserRequest;
 use App\User;
 use App\Country;
 use App\City;
@@ -13,7 +14,6 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Requests\RegisterUserRequest;
 
 class RegisterController extends Controller
 {
@@ -68,7 +68,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         // dd($data);
-        $val = Validator::make($data, RegisterUserRequest::rules());
+        $val = Validator::make($data, (new RegisterUserRequest())->rules());
         return $val;
     }
 

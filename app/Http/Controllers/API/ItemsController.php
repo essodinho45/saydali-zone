@@ -62,12 +62,11 @@ class ItemsController extends Controller
                 $items = Item::whereIn('user_id', $ids_array)->get();
                 $baskets = Basket::whereIn('user_id', $ids_array)->get();
             }
-            return [$items, $baskets];        
+            return [$items, $baskets];
     }
 
     public function getAgents($id, $is_basket)
     {
-        try{
             if($is_basket != '0' && $is_basket != 'false')
                 return  Basket::findOrFail($id)->user;
             else{
@@ -86,13 +85,13 @@ class ItemsController extends Controller
                     $allAgents->forget($key);
                     }
                 }
-                
+
                 foreach($allAgents as $agent){
                     $c = $c->concat($agent->children->where('user_category_id', 3));
                 }
                 $allAgents = $allAgents->concat($c);
 
-    
+
                 $favAg = \Auth::user()->children()->wherePivot('comp_id','=',$item->company->id)->get();
                 foreach($allAgents as $key => $value){
                     if($favAg->contains('id',$value->id))
@@ -100,7 +99,7 @@ class ItemsController extends Controller
                 }
                 foreach($favAg as $fA)
                     $allAgents->prepend($fA);
-                    
+
                 foreach($allAgents as $key => $value){
 
                     if($item->isFreezedByUser($value->id)){
@@ -108,8 +107,6 @@ class ItemsController extends Controller
                     }
                 }
             }
-        }
-        catch(\Exception $e){dd($e);}
         return $allAgents->unique();
     }
 

@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Session;
 use Throwable;
 
 class Handler extends ExceptionHandler

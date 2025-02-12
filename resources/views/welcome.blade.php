@@ -12,7 +12,7 @@
                   </button>
                 </h5>
               </div>
-          
+
               <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
                 <div class="card-body p-0">
                     <div class="list-group">
@@ -102,7 +102,7 @@
                         <h5>
                             <p class="">
                                     تطبيق لإدارة عمليات طلب الأدوية عبر الانترنت
-                                    من قبل الصيدلي وإرسالها إلى الموزع ووكيل شركات الأدوية 
+                                    من قبل الصيدلي وإرسالها إلى الموزع ووكيل شركات الأدوية
                                     بالإضافة إلى خدمات متنوعة تخدم الصيدلي في أعماله
                             </p>
                             <p>
@@ -115,7 +115,7 @@
                     </div>
                 </div>
             </div>
-            
+
             {{-- <div class="col-md-4 py-4" id="mainNewsDiv">
             <h3><a href="{{ route('news') }}" class="btn btn-lg btn-outline-navyblue">{{__('News')}}</a></h3>
                 <div id="mainNews" class="p-2">

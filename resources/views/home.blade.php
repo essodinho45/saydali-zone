@@ -4,7 +4,7 @@
     <div class="container py-4">
         <div class="row justify-content-center">
             <div class="col-md-2 bg-transparent text-lightkiwi h-100">
-                @if (count($ads1) > 0)
+                @if (count($ads1??[]) > 0)
                     @foreach ($ads1 as $ads)
                         <img src="..{{ $ads->image_url }}" class="w-100 h-100 mb-2 rounded">
                     @endforeach
@@ -68,7 +68,7 @@
                 </div>
             </div>
             <div class="col-md-2 bg-transparent text-lightkiwi h-100">
-                @if (count($ads2) > 0)
+                @if (count($ads2??[]) > 0)
                     @foreach ($ads2 as $ads)
                         <img src="..{{ $ads->image_url }}" class="w-100 h-100 mb-2 rounded">
                     @endforeach
