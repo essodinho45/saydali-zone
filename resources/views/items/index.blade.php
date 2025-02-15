@@ -110,6 +110,29 @@
                         </thead>
                         <tbody>
                             @foreach ($items as $item)
+                                <div class="modal fade" id="itemOffers{{ $item->id }}" tabindex="-1" role="dialog"
+                                    aria-labelledby="itemOffers{{ $item->id }}Label" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="itemOffers{{ $item->id }}Label">Modal title
+                                                </h5>
+                                                <button type="button" class="close" data-dismiss="modal"
+                                                    aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                </button>
+                                            </div>
+                                            <div class="modal-body">
+                                                ...
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary"
+                                                    data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <tr @if ($item->isFreezedByUser(Auth::user()->id)) class='table-danger' @endif>
                                     <th scope="row">{{ $item->id }}</th>
                                     <td>{{ $item->name }}</td>
@@ -157,6 +180,11 @@
                                                 </button>
                                             </form>
                                         @elseif (Auth::user()->user_category_id == 5)
+                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                                data-target="#itemOffers{{ $item->id }}"
+                                                title="{{ __('Show Offers') }}">
+                                                <i class="fas fa-star"></i>
+                                            </button>
                                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                                                 data-target="#sender_remark" title="{{ __('Insert Sender Remark') }}"
                                                 onclick="sendItemsToCart({{ $item->id }}, false)">
@@ -494,12 +522,12 @@
                         data = Object.values(data);
                         if (data.length > 0) {
                             var title = "";
-                            for(var i = 0; i < data.length; i++){
+                            for (var i = 0; i < data.length; i++) {
                                 if (data[i].discount > 0)
                                     title = "" + data[i].discount + " %" + " | " + data[i].quant;
-                                else if (data[i].free_quant > 0){
+                                else if (data[i].free_quant > 0) {
                                     title = "" + data[i].quant + " + " + Math.trunc(data[i].free_quant);
-                                    if(data[i].free_item_name != "")
+                                    if (data[i].free_item_name != "")
                                         title += " (" + data[i].free_item_name + ")";
                                 }
                                 title += "\n"
