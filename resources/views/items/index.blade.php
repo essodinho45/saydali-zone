@@ -115,20 +115,13 @@
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="itemOffers{{ $item->id }}Label">Modal title
-                                                </h5>
+                                                <h5 class="modal-title" id="itemOffers{{ $item->id }}Label">{{__('Offers')}}</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <div class="modal-body">
-
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">{{ __('Cancel') }}</button>
-                                                <button type="button" class="btn btn-primary">{{ __('Save') }}</button>
+                                            <div class="modal-body" id="itemOffers{{ $item->id }}Body">
                                             </div>
                                         </div>
                                     </div>
@@ -372,6 +365,7 @@
         <script>
             var i_changed = [];
             var b_changed = [];
+            var offers = [];
             $(document).ready(function() {
                 $('#ItemsTable thead tr').clone(true).appendTo('#ItemsTable thead');
                 $('#ItemsTable thead tr:eq(1) th').each(function(i) {
@@ -447,7 +441,7 @@
                     );
                     return $opt;
                 }
-            };
+            }
 
             function quantityChange(id, isBasket) {
                 if ((isBasket && jQuery.inArray("" + id, b_changed) != -1) || (!isBasket && jQuery.inArray("" + id,
@@ -522,25 +516,10 @@
                         console.log(Object.values(data));
                         data = Object.values(data);
                         if (data.length > 0) {
-                            var title = "";
-                            for (var i = 0; i < data.length; i++) {
-                                if (data[i].discount > 0)
-                                    title = "" + data[i].discount + " %" + " | " + data[i].quant;
-                                else if (data[i].free_quant > 0) {
-                                    title = "" + data[i].quant + " + " + Math.trunc(data[i].free_quant);
-                                    if (data[i].free_item_name != "")
-                                        title += " (" + data[i].free_item_name + ")";
-                                }
-                                title += "\n"
-                            }
-                            $("#reciever_id" + item).parent().parent().addClass('table-success');
-                            $("#reciever_id" + item).parent().parent().attr('data-toggle', "tooltip").attr('title',
-                                title);
-                            $('[data-toggle="tooltip"]').tooltip('enable');
+                            $("#itemOffers"+item+"Btn").removeAttr('disabled');
+                            fillOffersModal(item, data);
                         } else {
-                            $("#reciever_id" + item).parent().parent().removeClass('table-success');
-                            // $("#reciever_id"+item).parent().parent().removeAttr('data-toggle').removeAttr('title').removeAttr('data-original-title');
-                            $('[data-toggle="tooltip"]').tooltip('disable');
+                            $("#itemOffers"+item+"Btn").attr('disabled', 'disabled');
                         }
                     },
                     error: function(error) {
@@ -549,6 +528,50 @@
                 });
             }
 
+            function fillOffersModal(item, data){
+                var htmlContent = "<div class=\"table-responsive-md\">" +
+                    "<table class=\"table table-hover table-sm table-bordered nowrap mt-2\" id=\"offersTable\">" +
+                    "<thead>" +
+                    "<tr>" +
+                    "<th scope=\"col\">{{ __('Discount') }} %</th>" +
+                    "<th scope=\"col\">{{ __('Quantity') }}</th>" +
+                    "<th scope=\"col\">{{ __('Free Item') }}</th>" +
+                    "<th scope=\"col\">{{ __('Free Quantity') }}</th>" +
+                    "<th scope=\"col\">{{ __('To Date') }}</th>" +
+                    "<th scope=\"col\">{{ __('Actions') }}</th>" +
+                    "</tr>" +
+                    "</thead>" +
+                    "<tbody>";
+                    for (var i = 0; i < data.length; i++) {
+                        htmlContent += "<tr>";
+                        htmlContent += ("<td>"+(data[i].discount > 0 ? data[i].discount : '-')+"</td>");
+                        htmlContent += ("<td>"+(data[i].quant > 0 ? data[i].quant : '-')+"</td>");
+                        console.log("name: "+data[i].free_item_name);
+                        htmlContent += ("<td>"+(data[i].free_item_name != "" ? data[i].free_item_name : "-")+"</td>");
+                        htmlContent += ("<td>"+(data[i].free_quant > 0 ? data[i].free_quant : '-')+"</td>");
+                        var to_date = new Date(data[i].to_date);
+                        var to_date_string = to_date.getFullYear() + "-" + (to_date.getMonth()+1) + "-" + to_date.getDate();
+                        htmlContent += ("<td>"+to_date_string+"</td>");
+                        var is_checked = offers[item] == data[i].id ? " checked" : "";
+                        var check_input = "<div class=\"custom-control custom-checkbox\">";
+                        console.log(item);
+                        check_input += "<input type=\"checkbox\" class=\"offer-check\" id=\"offerCheck"+data[i].id+"\" onclick=\"chooseOffer("+item+","+data[i].id+")\""+is_checked+" >";
+                        check_input += "</div>";
+                        htmlContent += ("<td>"+check_input+"</td>");
+                        htmlContent += "</tr>";
+                    }
+                    htmlContent += "</tbody>" +
+                    "</table>" +
+                    "</div>";
+                    $("#itemOffers"+item+"Body").html(htmlContent);
+            }
+            function chooseOffer(item,offer){
+                $(".offer-check").each(function(){
+                    $(this).prop("checked", false);
+                });
+                $("#offerCheck"+offer).prop("checked", true);
+                offers[item] = offer;
+            }
             function freezeItemByAgent(item, freeze) {
                 $.ajaxSetup({
                     headers: {
@@ -591,7 +614,7 @@
             }
 
             function ajaxSendtoCart(item = null, isBasket) {
-
+                offer = null;
                 if (item == null) {
                     quantity = $('#quantity').val();
                     item = $('#item').val();
@@ -606,6 +629,7 @@
                     } else {
                         quantity = $('#quantity' + item).val();
                         reciever_id = $('#reciever_id' + item).val();
+                        offer = offers[item];
                     }
                 }
                 if (quantity > 0) {
@@ -617,7 +641,8 @@
                             isBasket: isBasket,
                             reciever_id: reciever_id,
                             quantity: quantity,
-                            sender_remark: sender_remark
+                            sender_remark: sender_remark,
+                            offer: offer
                         },
                         success: function(data) {
                             console.log(data);

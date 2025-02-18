@@ -13,6 +13,7 @@ use App\Cart;
 use App\Order;
 use App\Basket;
 use App\Offer;
+use Illuminate\Support\Facades\Log;
 
 class OrdersController extends Controller
 {
@@ -144,11 +145,6 @@ class OrdersController extends Controller
         $offersAgents = [];
         $reciever = User::findOrFail($request->reciever_id);
         // dd($reciever->category->id);
-        if ($reciever->category->id != 2) {
-            $recieverParents = User::findOrFail($request->reciever_id)->parents;
-            $offersAgents = $recieverParents->where('user_category_id', 2)->pluck('id');
-        } else
-            $offersAgents[] = (int) $request->reciever_id;
         $cart = Cart::where(['sender_id' => \Auth::user()->id, 'reciever_id' => $request->reciever_id, 'item_id' => $request->item_id, 'is_basket' => ($request->isBasket == "true")])->get();
         if ($cart->count() == 0) {
             $cart = new Cart([
@@ -167,20 +163,15 @@ class OrdersController extends Controller
                 }
             } else {
                 $item = Item::findOrFail($request->item_id);
-                $currentOffers = $item->offers
-                    ->where('to_date', '>=', now())
-                    ->where('from_date', '<=', now())
-                    ->whereIn('user_id', $offersAgents);
-                if ($currentOffers->count() > 0
-                    && $currentOffers->where('discount', '>', 0)->count() > 0
-                    && $request->quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
-                    $item->price -= (float) $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
-                }
-                if ($currentOffers->count() > 0
-                    && $currentOffers->where('free_quant', '>', 0)->count() > 0
-                    && $request->quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant
-                    && $request->item_id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
-                    $freeQuant = (int) (($request->quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
+                if($request->offer){
+                    $currentOffer = Offer::query()->findOrFail($request->offer);
+                    if($currentOffer->discount > 0 && $request->quantity >= $currentOffer->quant)
+                        $item->price -= (float) $item->price * ($currentOffer->discount / 100);
+                    if($currentOffer->free_quant > 0 && $request->quantity >= $currentOffer->quant)
+                    {
+                        if($request->item_id == $currentOffer->free_item)
+                            $freeQuant = (int) (floor($request->quantity / $currentOffer->quant) * $currentOffer->free_quant);
+                    }
                 }
                 $price = (float) ($request->quantity * $item->price);
             }
@@ -194,12 +185,15 @@ class OrdersController extends Controller
                 $price = $quantity * (Basket::findOrFail($request->item_id)->price);
             else {
                 $item = Item::findOrFail($request->item_id);
-                $currentOffers = $item->offers->where('to_date', '>=', now())->whereIn('user_id', $offersAgents);
-                if ($currentOffers->count() > 0 && $currentOffers->where('discount', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('discount', '>', 0)->first->quantity) {
-                    $item->price -= $item->price * ($currentOffers->where('discount', '>', 0)->first->discount->discount / 100);
-                }
-                if ($currentOffers->count() > 0 && $currentOffers->where('free_quant', '>', 0)->count() > 0 && $quantity >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant && $request->item_id >= $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_item) {
-                    $freeQuant = (int) (($quantity / $currentOffers->where('free_quant', '>', 0)->first->free_quant->quant) * $currentOffers->where('free_quant', '>', 0)->first->free_quant->free_quant);
+                if($request->offer){
+                    $currentOffer = Offer::query()->findOrFail($request->offer);
+                    if($currentOffer->discount > 0 && $quantity >= $currentOffer->quant)
+                        $item->price -= (float) $item->price * ($currentOffer->discount / 100);
+                    if($currentOffer->free_quant > 0 && $quantity >= $currentOffer->quant)
+                    {
+                        if($request->item_id == $currentOffer->free_item)
+                            $freeQuant = (int) (floor($quantity / $currentOffer->quant) * $currentOffer->free_quant);
+                    }
                 }
                 $price = $quantity * $item->price;
             }
@@ -277,15 +271,20 @@ class OrdersController extends Controller
     }
     public function postItemAgent(Request $request)
     {
-        $offersAgents = [];
         $item = Item::findOrFail($request->item);
         $reciever = User::findOrFail($request->id);
+        $offersAgents = User::where('user_category_id', Constants::ADMIN)->pluck('id');
+        $offersAgents[] = (int) $request->id;
         // dd($reciever->category->id);
         if ($reciever->category->id != Constants::AGENT) {
             $recieverParents = User::findOrFail($request->id)->parents;
-            $offersAgents = $recieverParents->where('user_category_id', 2)->pluck('id');
+            $recieverOffersAgents = $recieverParents->where('user_category_id', Constants::AGENT)->pluck('id');
+        } else {
+            $recieverParents = User::findOrFail($request->id)->parents;
+            $recieverOffersAgents = $recieverParents->where('user_category_id', Constants::COMPANY)->pluck('id');
         }
-            $offersAgents[] = (int) $request->id;
+        $offersAgents [] = $recieverOffersAgents;
+        Log::debug($offersAgents);
         $offer = $item->offers
             ->where('to_date', '>=', now())
             ->where('from_date', '<=', now())
