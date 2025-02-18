@@ -123,12 +123,12 @@
                                                 </button>
                                             </div>
                                             <div class="modal-body">
-                                                ...
+
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary">Save changes</button>
+                                                    data-dismiss="modal">{{ __('Cancel') }}</button>
+                                                <button type="button" class="btn btn-primary">{{ __('Save') }}</button>
                                             </div>
                                         </div>
                                     </div>
@@ -181,14 +181,15 @@
                                             </form>
                                         @elseif (Auth::user()->user_category_id == 5)
                                             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
-                                                data-target="#itemOffers{{ $item->id }}"
-                                                title="{{ __('Show Offers') }}">
-                                                <i class="fas fa-star"></i>
-                                            </button>
-                                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
                                                 data-target="#sender_remark" title="{{ __('Insert Sender Remark') }}"
                                                 onclick="sendItemsToCart({{ $item->id }}, false)">
                                                 <i class="fas fa-comment"></i>
+                                            </button>
+                                            <button id="itemOffers{{ $item->id }}Btn" type="button"
+                                                class="btn btn-primary btn-sm" data-toggle="modal"
+                                                data-target="#itemOffers{{ $item->id }}" title="{{ __('Show Offers') }}"
+                                                disabled>
+                                                <i class="fas fa-star"></i>
                                             </button>
                                             <button type="button" class="btn btn-primary disabled btn-sm"
                                                 title="{{ __('Add to Cart') }}"
