@@ -115,7 +115,8 @@
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h5 class="modal-title" id="itemOffers{{ $item->id }}Label">{{__('Offers')}}</h5>
+                                                <h5 class="modal-title" id="itemOffers{{ $item->id }}Label">
+                                                    {{ __('Offers') }}</h5>
                                                 <button type="button" class="close" data-dismiss="modal"
                                                     aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
@@ -127,8 +128,8 @@
                                     </div>
                                 </div>
                                 <tr @if ($item->isFreezedByUser(Auth::user()->id)) class='table-danger' @endif>
-                                    <th scope="row">{{ $item->id }}</th>
-                                    <td>{{ $item->name }}</td>
+                                    <th scope="row" class="spancol{{ $item->id }}">{{ $item->id }}</th>
+                                    <td class="spancol{{ $item->id }}">{{ $item->name }}</td>
                                     <td>{{ $item->company->f_name }}</td>
                                     <td>{{ round($item->price, 2) }}</td>
                                     <td>{{ round($item->customer_price, 2) }}</td>
@@ -178,12 +179,6 @@
                                                 onclick="sendItemsToCart({{ $item->id }}, false)">
                                                 <i class="fas fa-comment"></i>
                                             </button>
-                                            <button id="itemOffers{{ $item->id }}Btn" type="button"
-                                                class="btn btn-primary btn-sm" data-toggle="modal"
-                                                data-target="#itemOffers{{ $item->id }}" title="{{ __('Show Offers') }}"
-                                                disabled>
-                                                <i class="fas fa-star"></i>
-                                            </button>
                                             <button type="button" class="btn btn-primary disabled btn-sm"
                                                 title="{{ __('Add to Cart') }}"
                                                 onclick="ajaxSendtoCart({{ $item->id }}, false)" disabled
@@ -217,6 +212,8 @@
                                             </button>
                                         @endif
                                     </td>
+                                </tr>
+                                <tr id="offersRow{{ $item->id }}" class="d-none">
                                 </tr>
                             @endforeach
                         </tbody>
@@ -432,7 +429,6 @@
                 }
 
                 var optimage = $(opt.element).attr('logo_image');
-                console.log(optimage)
                 if (!optimage) {
                     return opt.text;
                 } else {
@@ -462,21 +458,36 @@
                     },
                     success: function(data) {
                         if (!isBasket) {
+                            console.log("agents");
+                            console.log(data);
+                            var agents = data['agents'];
+                            var offersAgents = data['offersAgents'];
                             $("#reciever_id" + id).find('option').remove();
-                            $.each(data, function(key) {
-                                var o = new Option(data[key].f_name, data[key].id);
-                                var sname = (data[key].s_name == null) ? '' : data[key].s_name;
+                            $.each(agents, function(key) {
+                                var o = new Option(agents[key].f_name, agents[key].id);
+                                var sname = (agents[key].s_name == null) ? '' : agents[key].s_name;
                                 /// jquerify the DOM object 'o' so we can use the html method
-                                $(o).html(data[key].f_name + " " + sname);
-                                $(o).attr('logo_image', data[key].logo_image);
+                                $(o).html(agents[key].f_name + " " + sname);
+                                $(o).attr('logo_image', agents[key].logo_image);
                                 $("#reciever_id" + id).append(o);
                             });
                             agentChange(id);
+                            if (offersAgents.length > 0) {
+                                var offersMessage = "العرض لهذا الصنف متوفر عند: ";
+                                $.each(offersAgents, function(key) {
+                                    var name = offersAgents[key].f_name + " " + ((offersAgents[key]
+                                        .s_name == null) ? '' : offersAgents[key].s_name);
+                                    offersMessage += (name + ", ");
+                                });
+                                $('#offersRow' + id).html('<td colspan="7" class="table-success">' + offersMessage +
+                                    '</td>');
+                                $('#offersRow' + id).removeClass('d-none');
+                                $('.spancol' + id).attr('rowspan', 2);
+                            }
+
                             $('#i_btn' + id).removeAttr('disabled').removeClass('disabled');
                             i_changed.push("" + id);
-                            console.log(i_changed);
                         } else {
-                            console.log(data);
                             $("#b_reciever_id" + id).find('option').remove();
                             var sname = (data.s_name == null) ? '' : data.s_name;
                             var o = new Option(data.f_name, data.id);
@@ -486,7 +497,6 @@
                             $("#b_reciever_id" + id).append(o);
                             $('#b_btn' + id).removeAttr('disabled').removeClass('disabled');
                             b_changed.push("" + id);
-                            console.log(b_changed);
                         }
                     },
                     error: function(error) {
@@ -510,16 +520,12 @@
                         item: item
                     },
                     success: function(data) {
-                        console.log("offers");
-                        console.log("___________________________________");
-                        console.log(data);
-                        console.log(Object.values(data));
                         data = Object.values(data);
+                        console.log("offers");
+                        console.log(data);
                         if (data.length > 0) {
-                            $("#itemOffers"+item+"Btn").removeAttr('disabled');
                             fillOffersModal(item, data);
-                        } else {
-                            $("#itemOffers"+item+"Btn").attr('disabled', 'disabled');
+                            $('#itemOffers' + item).modal('show');
                         }
                     },
                     error: function(error) {
@@ -528,7 +534,7 @@
                 });
             }
 
-            function fillOffersModal(item, data){
+            function fillOffersModal(item, data) {
                 var htmlContent = "<div class=\"table-responsive-md\">" +
                     "<table class=\"table table-hover table-sm table-bordered nowrap mt-2\" id=\"offersTable\">" +
                     "<thead>" +
@@ -542,36 +548,37 @@
                     "</tr>" +
                     "</thead>" +
                     "<tbody>";
-                    for (var i = 0; i < data.length; i++) {
-                        htmlContent += "<tr>";
-                        htmlContent += ("<td>"+(data[i].discount > 0 ? data[i].discount : '-')+"</td>");
-                        htmlContent += ("<td>"+(data[i].quant > 0 ? data[i].quant : '-')+"</td>");
-                        console.log("name: "+data[i].free_item_name);
-                        htmlContent += ("<td>"+(data[i].free_item_name != "" ? data[i].free_item_name : "-")+"</td>");
-                        htmlContent += ("<td>"+(data[i].free_quant > 0 ? data[i].free_quant : '-')+"</td>");
-                        var to_date = new Date(data[i].to_date);
-                        var to_date_string = to_date.getFullYear() + "-" + (to_date.getMonth()+1) + "-" + to_date.getDate();
-                        htmlContent += ("<td>"+to_date_string+"</td>");
-                        var is_checked = offers[item] == data[i].id ? " checked" : "";
-                        var check_input = "<div class=\"custom-control custom-checkbox\">";
-                        console.log(item);
-                        check_input += "<input type=\"checkbox\" class=\"offer-check\" id=\"offerCheck"+data[i].id+"\" onclick=\"chooseOffer("+item+","+data[i].id+")\""+is_checked+" >";
-                        check_input += "</div>";
-                        htmlContent += ("<td>"+check_input+"</td>");
-                        htmlContent += "</tr>";
-                    }
-                    htmlContent += "</tbody>" +
+                for (var i = 0; i < data.length; i++) {
+                    htmlContent += "<tr>";
+                    htmlContent += ("<td>" + (data[i].discount > 0 ? data[i].discount : '-') + "</td>");
+                    htmlContent += ("<td>" + (data[i].quant > 0 ? data[i].quant : '-') + "</td>");
+                    htmlContent += ("<td>" + (data[i].free_item_name != "" ? data[i].free_item_name : "-") + "</td>");
+                    htmlContent += ("<td>" + (data[i].free_quant > 0 ? data[i].free_quant : '-') + "</td>");
+                    var to_date = new Date(data[i].to_date);
+                    var to_date_string = to_date.getFullYear() + "-" + (to_date.getMonth() + 1) + "-" + to_date.getDate();
+                    htmlContent += ("<td>" + to_date_string + "</td>");
+                    var is_checked = offers[item] == data[i].id ? " checked" : "";
+                    var check_input = "<div class=\"custom-control custom-checkbox\">";
+                    check_input += "<input type=\"checkbox\" class=\"offer-check\" id=\"offerCheck" + data[i].id +
+                        "\" onclick=\"chooseOffer(" + item + "," + data[i].id + ")\"" + is_checked + " >";
+                    check_input += "</div>";
+                    htmlContent += ("<td>" + check_input + "</td>");
+                    htmlContent += "</tr>";
+                }
+                htmlContent += "</tbody>" +
                     "</table>" +
                     "</div>";
-                    $("#itemOffers"+item+"Body").html(htmlContent);
+                $("#itemOffers" + item + "Body").html(htmlContent);
             }
-            function chooseOffer(item,offer){
-                $(".offer-check").each(function(){
+
+            function chooseOffer(item, offer) {
+                $(".offer-check").each(function() {
                     $(this).prop("checked", false);
                 });
-                $("#offerCheck"+offer).prop("checked", true);
+                $("#offerCheck" + offer).prop("checked", true);
                 offers[item] = offer;
             }
+
             function freezeItemByAgent(item, freeze) {
                 $.ajaxSetup({
                     headers: {
@@ -587,7 +594,6 @@
                         freeze: freeze
                     },
                     success: function(data) {
-                        console.log(data);
                         location.reload();
                     },
                     error: function(error) {
@@ -645,7 +651,6 @@
                             offer: offer
                         },
                         success: function(data) {
-                            console.log(data);
                             location.reload();
                         },
                         error: function(error) {
@@ -667,7 +672,6 @@
                         };
                         objects.push(obj);
                     }
-                    console.log(objects);
                 });
                 if (objects.length > 0) {
                     $.ajax({
@@ -677,7 +681,6 @@
                             objects: objects
                         },
                         success: function(data) {
-                            console.log(data);
                             location.reload();
                         },
                         error: function(error) {

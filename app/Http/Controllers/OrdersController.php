@@ -163,13 +163,12 @@ class OrdersController extends Controller
                 }
             } else {
                 $item = Item::findOrFail($request->item_id);
-                if($request->offer){
+                if ($request->offer) {
                     $currentOffer = Offer::query()->findOrFail($request->offer);
-                    if($currentOffer->discount > 0 && $request->quantity >= $currentOffer->quant)
+                    if ($currentOffer->discount > 0 && $request->quantity >= $currentOffer->quant)
                         $item->price -= (float) $item->price * ($currentOffer->discount / 100);
-                    if($currentOffer->free_quant > 0 && $request->quantity >= $currentOffer->quant)
-                    {
-                        if($request->item_id == $currentOffer->free_item)
+                    if ($currentOffer->free_quant > 0 && $request->quantity >= $currentOffer->quant) {
+                        if ($request->item_id == $currentOffer->free_item)
                             $freeQuant = (int) (floor($request->quantity / $currentOffer->quant) * $currentOffer->free_quant);
                     }
                 }
@@ -185,13 +184,12 @@ class OrdersController extends Controller
                 $price = $quantity * (Basket::findOrFail($request->item_id)->price);
             else {
                 $item = Item::findOrFail($request->item_id);
-                if($request->offer){
+                if ($request->offer) {
                     $currentOffer = Offer::query()->findOrFail($request->offer);
-                    if($currentOffer->discount > 0 && $quantity >= $currentOffer->quant)
+                    if ($currentOffer->discount > 0 && $quantity >= $currentOffer->quant)
                         $item->price -= (float) $item->price * ($currentOffer->discount / 100);
-                    if($currentOffer->free_quant > 0 && $quantity >= $currentOffer->quant)
-                    {
-                        if($request->item_id == $currentOffer->free_item)
+                    if ($currentOffer->free_quant > 0 && $quantity >= $currentOffer->quant) {
+                        if ($request->item_id == $currentOffer->free_item)
                             $freeQuant = (int) (floor($quantity / $currentOffer->quant) * $currentOffer->free_quant);
                     }
                 }
@@ -267,23 +265,31 @@ class OrdersController extends Controller
             //     }
             // }
         }
-        return $allAgents->unique();
+        $offersAgents = $allAgents->pluck('id');
+        $offersAgents[] = $item->user_id;
+        $offerUsers = Offer::where('item_id', $item->id)
+            ->whereIn('user_id', $offersAgents)
+            ->where('to_date', '>=', now())
+            ->where('from_date', '<=', now())
+            ->pluck('user_id');
+        $offersAgents = User::whereIn('id', $offerUsers)->get();
+        $res = ['agents' => $allAgents->unique(), 'offersAgents' => $offersAgents];
+        return $res;
     }
     public function postItemAgent(Request $request)
     {
         $item = Item::findOrFail($request->item);
         $reciever = User::findOrFail($request->id);
-        $offersAgents = User::where('user_category_id', Constants::ADMIN)->pluck('id');
+        $offersAgents = User::where('user_category_id', Constants::ADMIN)->pluck('id')->toArray();
         $offersAgents[] = (int) $request->id;
+        $offersAgents[] = (int) $item->user_id;
+        $recieverOffersAgents = [];
         // dd($reciever->category->id);
         if ($reciever->category->id != Constants::AGENT) {
             $recieverParents = User::findOrFail($request->id)->parents;
-            $recieverOffersAgents = $recieverParents->where('user_category_id', Constants::AGENT)->pluck('id');
-        } else {
-            $recieverParents = User::findOrFail($request->id)->parents;
-            $recieverOffersAgents = $recieverParents->where('user_category_id', Constants::COMPANY)->pluck('id');
+            $recieverOffersAgents = $recieverParents->where('user_category_id', Constants::AGENT)->pluck('id')->toArray();
         }
-        $offersAgents [] = $recieverOffersAgents;
+        $offersAgents = array_merge($offersAgents, $recieverOffersAgents);
         Log::debug($offersAgents);
         $offer = $item->offers
             ->where('to_date', '>=', now())
