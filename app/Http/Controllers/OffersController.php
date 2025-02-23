@@ -69,7 +69,7 @@ class OffersController extends Controller
             $offer->remark = $request->remark;
             $offer->name = $request->name;
             $offer->price = $request->price;
-            $offer->from_date = $request->from_date;
+            $offer->from_date = $request->from_date ?? now();
             $offer->to_date = $request->to_date;
             $offer->save();
             $basket_items = explode(',', $request->basket_info);
@@ -82,7 +82,7 @@ class OffersController extends Controller
             $offer->user_id = \Auth::user()->id;
             $offer->item_id = $request->item_id;
             $offer->remark = $request->remark;
-            $offer->from_date = $request->from_date;
+            $offer->from_date = $request->from_date ?? now();
             $offer->to_date = $request->to_date;
             $offer->discount = $request->discount ?? 0;
             $offer->free_quant = $request->free_quant ?? 0;
@@ -112,9 +112,9 @@ class OffersController extends Controller
      */
     public function edit($type, $id)
     {
-        if($type == 1)
+        if ($type == 1)
             $offer = Offer::findOrFail($id);
-        else{
+        else {
             $offer = Basket::findOrFail($id);
             $offer->isBasket = true;
         }
@@ -144,11 +144,10 @@ class OffersController extends Controller
      */
     public function update(Request $request, $type, $id)
     {
-        if($type == 1){
+        if ($type == 1) {
             $offer = Offer::findOrFail($id);
             $offer->update($request->all());
-        }
-        else{
+        } else {
             $offer = Basket::findOrFail($id);
             $offer->update($request->all());
             Basket::findOrFail($id)->items()->detach();

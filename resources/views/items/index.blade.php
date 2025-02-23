@@ -479,8 +479,12 @@
                                         .s_name == null) ? '' : offersAgents[key].s_name);
                                     offersMessage += (name + ", ");
                                 });
-                                $('#offersRow' + id).html('<td colspan="7" class="table-success">' + offersMessage +
-                                    '</td>');
+                                var rowHtmlContent = '<td colspan="7" class="table-success">' + offersMessage;
+                                rowHtmlContent += '<button id="itemOffers' + id + 'Btn" type="button"' +
+                                    'class="btn btn-primary btn-sm float-right mr-2" data-toggle="modal"' +
+                                    'data-target="#itemOffers' + id + '" title="{{ __('Show Offers') }}">' +
+                                    '{{ __('Show Offers') }}' + '</button>' + '</td>';
+                                $('#offersRow' + id).html(rowHtmlContent);
                                 $('#offersRow' + id).removeClass('d-none');
                                 $('.spancol' + id).attr('rowspan', 2);
                             }
@@ -544,7 +548,7 @@
                     "<th scope=\"col\">{{ __('Free Item') }}</th>" +
                     "<th scope=\"col\">{{ __('Free Quantity') }}</th>" +
                     "<th scope=\"col\">{{ __('To Date') }}</th>" +
-                    "<th scope=\"col\">{{ __('Actions') }}</th>" +
+                    "<th scope=\"col\">{{ __('Select') }}</th>" +
                     "</tr>" +
                     "</thead>" +
                     "<tbody>";
